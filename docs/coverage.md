@@ -1,0 +1,78 @@
+# 蓝图覆盖图
+
+生成时间：2026-09-27T16:54:52.666Z
+
+由 scripts/gen-coverage.js 生成，勿手改。
+
+## d1 解决方案设计与架构 / Solution Design & Architecture
+
+| Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
+| --- | --- | --- | --- | --- | --- |
+| 1.1 | 把业务问题转化为 Claude 方案 | Translate business problems into Claude-based AI solutions | 待写 | — | 0 |
+| 1.2 | 端到端架构：输入→处理→输出→反馈闭环 | Design end-to-end architectures (input → processing → output → feedback loops) | 待写 | — | 0 |
+| 1.3 | 选择架构模式：workflow / agentic / augmented LLM | Select appropriate architectural patterns (workflow, agentic, augmented LLM) | 待写 | — | 0 |
+| 1.4 | 多 Agent 系统与编排策略 | Design multi-agent systems and orchestration strategies | 待写 | — | 0 |
+| 1.5 | 复杂问题的分解技术 | Apply decomposition techniques for complex problem solving | 待写 | — | 0 |
+| 1.6 | 对齐业务价值支柱 | Align solutions to business value pillars (efficiency, transformation, productivity, cost, performance SLAs) | 待写 | — | 0 |
+
+## d2 Claude 模型、提示与上下文工程 / Claude Models, Prompting & Context Engineering
+
+| Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
+| --- | --- | --- | --- | --- | --- |
+| 2.1 | 按取舍选择 Claude 模型 | Select appropriate Claude models based on trade-offs | 待写 | — | 0 |
+| 2.2 | System prompt、模板与护栏 | Design system prompts, templates, and guardrails | 待写 | — | 0 |
+| 2.3 | 提示技术：zero-shot / few-shot / CoT | Apply prompt engineering techniques (zero-shot, few-shot, chain-of-thought) | 待写 | — | 0 |
+| 2.4 | 上下文窗口与 token 管理 | Optimize context windows and manage token usage | 待写 | — | 0 |
+| 2.5 | 提示复用：缓存、模块化提示、Skills | Implement prompt reuse strategies (caching, modular prompts, Skills) | 待写 | q002 | 1 |
+
+## d3 集成 / Integration
+
+| Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
+| --- | --- | --- | --- | --- | --- |
+| 3.1 | 工具/Agent 配置的能力膨胀 | Evaluate tool/agent configuration for capability bloat | 待写 | q001 | 1 |
+| 3.2 | 认证授权与安全缺口 | Analyze authentication and authorization requirements to identify security gaps | 待写 | — | 0 |
+| 3.3 | 准确率与延迟的取舍 | Evaluate accuracy-latency trade-offs and justify configuration decisions | 待写 | — | 0 |
+| 3.4 | 大规模可观测性与监控策略 | Analyze observability challenges and select monitoring strategies at scale | 待写 | — | 0 |
+| 3.5 | RAG 管道：分块与索引 | Design a RAG pipeline with appropriate chunking and indexing strategies | 待写 | — | 0 |
+| 3.6 | 按数据形态与查询模式选检索策略 | Apply retrieval strategies matched to data shape and query pattern | 待写 | — | 0 |
+| 3.7 | 集成机制：MCP / API·CLI / agent-to-agent | Evaluate connection protocols and select the appropriate integration mechanism (MCP, API/CLI, agent-to-agent) | 待写 | — | 0 |
+| 3.8 | 渐进式发现 vs 一次性全量上下文 | Evaluate progressive discovery vs. monolithic context strategy | 待写 | — | 0 |
+
+## d4 评估、测试与优化 / Evaluation, Testing & Optimization
+
+| Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
+| --- | --- | --- | --- | --- | --- |
+| 4.1 | 定义评估指标 | Define evaluation metrics (accuracy, latency, cost, safety, security) | 待写 | — | 0 |
+| 4.2 | 评估数据集与混合方法测试框架 | Design evaluation datasets and test frameworks using mixed methodologies | 待写 | — | 0 |
+| 4.3 | A/B 测试与迭代改进 | Conduct A/B testing and iterative improvements | 待写 | — | 0 |
+| 4.4 | 诊断系统问题：提示失效、幻觉、模型不匹配 | Diagnose system issues (prompt failure, hallucinations, model mismatch) | 待写 | q003 | 1 |
+| 4.5 | 优化 token、延迟与性价比 | Optimize token usage, latency, and cost-performance trade-offs | 待写 | — | 0 |
+| 4.6 | 日志与可观测性监控 | Monitor system performance using logging and observability tools | 待写 | — | 0 |
+
+## d5 治理、安全与风险管理 / Governance, Safety & Risk Management
+
+| Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
+| --- | --- | --- | --- | --- | --- |
+| 5.1 | 护栏与安全控制 | Implement guardrails and safety controls | 待写 | — | 0 |
+| 5.2 | LLM 系统的风险、局限与失效模式 | Identify risks, limitations, and failure modes of LLM systems | 待写 | — | 0 |
+| 5.3 | 人在回路验证策略 | Apply human-in-the-loop validation strategies | 待写 | — | 0 |
+| 5.4 | 合规：GDPR / HIPAA / FedRAMP | Ensure compliance with regulations (e.g., GDPR, HIPAA, FedRAMP) | 待写 | — | 0 |
+| 5.5 | 伦理：偏见、公平、透明 | Address ethical AI considerations (bias, fairness, transparency) | 待写 | — | 0 |
+
+## d6 干系人沟通与生命周期管理 / Stakeholder Communication & Lifecycle Management
+
+| Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
+| --- | --- | --- | --- | --- | --- |
+| 6.1 | 结构化需求发现 | Conduct structured discovery and requirement gathering | 待写 | — | 0 |
+| 6.2 | 沟通架构决策与取舍 | Communicate architectural decisions and trade-offs | 待写 | — | 0 |
+| 6.3 | 反馈闭环与预期对齐（含 SLA） | Manage stakeholder feedback loops and expectation alignment (including SLAs) | 待写 | — | 0 |
+| 6.4 | 架构文档与实施指导 | Document architectures and provide implementation guidance | 待写 | — | 0 |
+| 6.5 | 支撑生命周期各阶段 | Support lifecycle phases (discovery, design, handoff, monitoring, iteration) | 待写 | — | 0 |
+
+## d7 开发者生产力与运维赋能 / Developer Productivity & Operational Enablement
+
+| Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
+| --- | --- | --- | --- | --- | --- |
+| 7.1 | 为团队配置 Claude 工具与环境（如 Claude Code） | Configure Claude tools and environments for teams (e.g., Claude Code) | 待写 | — | 0 |
+| 7.2 | 用 AI 工具改进开发流程 | Improve developer workflows using AI-assisted tooling | 待写 | — | 0 |
+| 7.3 | 支持调试与运维问题排查 | Support debugging and operational issue resolution | 待写 | — | 0 |

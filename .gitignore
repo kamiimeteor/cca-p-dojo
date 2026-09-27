@@ -1,5 +1,5 @@
 # 参考底本 —— 仅本地保留，不进公开仓库
-#   source/cca-f-dojo/   上一个项目（CCAR-F 备考站）的只读参考副本
+#   source/ 下的上一个项目只读参考副本
 source/
 # Anthropic 官方 Exam Guide PDF，版权归 Anthropic，只放链接不入库
 *.pdf
