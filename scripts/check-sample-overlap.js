@@ -58,26 +58,45 @@ function hashesForText(text) {
   }
   return hashes;
 }
-function checkQuestions(questions, hashes) {
+function checkText(value, hashes, root, exemptFields = new Set()) {
   const reference = new Set(hashes);
   const hits = [];
   function visit(value, field) {
+    if (exemptFields.has(field)) return;
     if (typeof value === 'string') {
       for (const hash of hashesForText(value)) if (reference.has(hash)) hits.push({ field, hash });
     } else if (value && typeof value === 'object') {
       for (const [key, child] of Object.entries(value)) visit(child, `${field}.${key}`);
     }
   }
-  visit(questions, 'questions');
+  visit(value, root);
   return hits;
 }
-function loadQuestions() {
-  const context = vm.createContext({ CONTENT_EN: { questions: {} } });
-  const dir = path.join(__dirname, '../cca-p/assets/data');
-  for (const file of fs.readdirSync(dir).filter((f) => /^content\.en\.q.*\.js$/.test(f)).sort()) {
+function checkQuestions(questions, hashes) {
+  return checkText(questions, hashes, 'questions');
+}
+function loadContent(root = path.resolve(__dirname, '..')) {
+  const context = vm.createContext({});
+  const dir = path.join(root, 'cca-p/assets/data');
+  const files = ['notes.js', 'content.en.js',
+    ...fs.readdirSync(dir).filter((f) => /^content\.en\.q.*\.js$/.test(f)).sort()];
+  for (const file of files) {
     vm.runInContext(fs.readFileSync(path.join(dir, file), 'utf8'), context, { filename: file, timeout: 1000 });
   }
-  return context.CONTENT_EN.questions;
+  return vm.runInContext('({ notes: { EXAM_META, NOTES }, english: CONTENT_EN })', context);
+}
+function checkContent(content, hashes) {
+  // Only the official English objective title field is exempt. The same words
+  // in prose, tables, block titles, or appendix titles are still checked.
+  const exemptFields = new Set(content.notes.NOTES
+    .filter((domain) => /^d[1-7]$/.test(domain.id))
+    .flatMap((domain) => domain.sections
+      .filter((section) => section.id.startsWith(`${domain.id.slice(1)}.`))
+      .map((section) => `content.english.sections.${section.id}.title`)));
+  return checkText(content, hashes, 'content', exemptFields);
+}
+function loadQuestions() {
+  return loadContent().english.questions;
 }
 
 /** 从完整 Exam Guide 提取三道样题及解析，不把其他章节用于比对。 */
@@ -134,12 +153,12 @@ if (require.main === module) {
     if (!source.samples) {
       console.log('SAMPLE OVERLAP: SKIPPED (no local official samples)');
     } else {
-      const hits = checkQuestions(loadQuestions(), source.hashes);
+      const hits = checkContent(loadContent(), source.hashes);
       if (hits.length) {
         for (const hit of hits) console.error(`✗ ${hit.field}: ${hit.hash}`);
         process.exitCode = 1;
-      } else console.log(`✓ 英文题干、选项和解析：${source.mode}，重叠 0 命中`);
+      } else console.log(`✓ notes.js / content.en.js 全部文本及英文题目（豁免官方 objective 标题）：${source.mode}，重叠 0 命中`);
     }
   } catch (error) { console.error(error.message); process.exitCode = 1; }
 }
-module.exports = { checkQuestions, loadQuestions, loadSampleReferences, extractSamples, hashesForText };
+module.exports = { checkQuestions, loadQuestions, checkContent, loadContent, loadSampleReferences, extractSamples, hashesForText };

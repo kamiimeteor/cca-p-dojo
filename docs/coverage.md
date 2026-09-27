@@ -1,6 +1,6 @@
 # 蓝图覆盖图
 
-生成时间：2026-09-27T16:54:52.666Z
+生成时间：2026-09-27T18:04:11.104Z
 
 由 scripts/gen-coverage.js 生成，勿手改。
 
@@ -29,14 +29,14 @@
 
 | Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
 | --- | --- | --- | --- | --- | --- |
-| 3.1 | 工具/Agent 配置的能力膨胀 | Evaluate tool/agent configuration for capability bloat | 待写 | q001 | 1 |
-| 3.2 | 认证授权与安全缺口 | Analyze authentication and authorization requirements to identify security gaps | 待写 | — | 0 |
-| 3.3 | 准确率与延迟的取舍 | Evaluate accuracy-latency trade-offs and justify configuration decisions | 待写 | — | 0 |
-| 3.4 | 大规模可观测性与监控策略 | Analyze observability challenges and select monitoring strategies at scale | 待写 | — | 0 |
-| 3.5 | RAG 管道：分块与索引 | Design a RAG pipeline with appropriate chunking and indexing strategies | 待写 | — | 0 |
-| 3.6 | 按数据形态与查询模式选检索策略 | Apply retrieval strategies matched to data shape and query pattern | 待写 | — | 0 |
-| 3.7 | 集成机制：MCP / API·CLI / agent-to-agent | Evaluate connection protocols and select the appropriate integration mechanism (MCP, API/CLI, agent-to-agent) | 待写 | — | 0 |
-| 3.8 | 渐进式发现 vs 一次性全量上下文 | Evaluate progressive discovery vs. monolithic context strategy | 待写 | — | 0 |
+| 3.1 | 工具/Agent 配置的能力膨胀 | Evaluate tool/agent configuration for capability bloat | ✓ | q001 | 1 |
+| 3.2 | 认证授权与安全缺口 | Analyze authentication and authorization requirements to identify security gaps | ✓ | — | 0 |
+| 3.3 | 准确率与延迟的取舍 | Evaluate accuracy-latency trade-offs and justify configuration decisions | ✓ | — | 0 |
+| 3.4 | 大规模可观测性与监控策略 | Analyze observability challenges and select monitoring strategies at scale | ✓ | — | 0 |
+| 3.5 | RAG 管道：分块与索引 | Design a RAG pipeline with appropriate chunking and indexing strategies | ✓ | — | 0 |
+| 3.6 | 按数据形态与查询模式选检索策略 | Apply retrieval strategies matched to data shape and query pattern | ✓ | — | 0 |
+| 3.7 | 集成机制：MCP / API·CLI / agent-to-agent | Evaluate connection protocols and select the appropriate integration mechanism (MCP, API/CLI, agent-to-agent) | ✓ | — | 0 |
+| 3.8 | 渐进式发现 vs 一次性全量上下文 | Evaluate progressive discovery vs. monolithic context strategy | ✓ | — | 0 |
 
 ## d4 评估、测试与优化 / Evaluation, Testing & Optimization
 

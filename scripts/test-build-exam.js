@@ -31,16 +31,28 @@ assert.strictEqual(EXAM_META.items, 63);
 assert.strictEqual(NOTES.reduce((sum, d) => sum + d.weight, 0), 100);
 assert.strictEqual(NOTES.reduce((sum, d) => sum + d.taskCount, 0), 38);
 assert.strictEqual(Object.keys(SECTION_INDEX).length, 42);
+const delivered = new Set(['3.1', '3.2', '3.3', '3.4', '3.5', '3.6', '3.7', '3.8', 'R.1']);
+let writtenSections = 0;
 for (const d of NOTES) {
   assert.strictEqual(d.blurb, '');
   assert.strictEqual(d.taskCount, d.id === 'ref' ? 0 : d.sections.length);
   assert(CONTENT_EN.domains[d.id]);
   for (const s of d.sections) {
-    assert.deepStrictEqual(s.blocks, [{ t: 'p', v: '（待写）' }]);
-    assert.deepStrictEqual(CONTENT_EN.sections[s.id].blocks, [{ v: '(TODO)' }]);
-    assert(CONTENT_EN.sections[s.id].title);
+    const en = CONTENT_EN.sections[s.id];
+    assert(en && en.title, `${s.id} 缺少英文小节`);
+    const zhPlaceholder = JSON.stringify(s.blocks) === JSON.stringify([{ t: 'p', v: '（待写）' }]);
+    const enPlaceholder = JSON.stringify(en.blocks) === JSON.stringify([{ v: '(TODO)' }]);
+    assert.strictEqual(zhPlaceholder, enPlaceholder, `${s.id} 中英文占位状态不一致`);
+    if (delivered.has(s.id)) assert(!zhPlaceholder, `${s.id} 不能回退为占位`);
+    if (!zhPlaceholder) {
+      writtenSections++;
+      assert(s.blocks.length > 0, `${s.id} 已写小节不能为空`);
+      assert.strictEqual(s.blocks.length, en.blocks.length, `${s.id} 中英 block 数不同`);
+      assert(!/（待写）|\(TODO\)/.test(JSON.stringify([s.blocks, en.blocks])), `${s.id} 残留占位文本`);
+    }
   }
 }
+for (const id of delivered) assert(SECTION_INDEX[id], `${id} 已交付小节不能删除`);
 for (const q of QUESTIONS) {
   assert.strictEqual(SECTION_INDEX[q.s].domainId, q.d);
   assert(CONTENT_EN.questions[q.id]);
@@ -76,7 +88,7 @@ assert.strictEqual(new Set(full.qs.map((q) => q.sc)).size, 7);
 assert.deepStrictEqual(full.scenarios, []);
 vm.runInContext('QUESTIONS.length = 0;', context);
 assert.deepStrictEqual(plain(context.buildExam(63)), { qs: [], scenarios: [] });
-console.log('✓ 63 题配额 11/8/12/10/9/9/4；3 题及空题库安全抽取；42 个中英文占位小节完整');
+console.log(`✓ 63 题配额 11/8/12/10/9/9/4；3 题及空题库安全抽取；42 节占位状态一致，${writtenSections} 节正文双语完整，D3 / R.1 无占位回退`);
 
 // A perfect score on a short bank is practice, not a full-exam pass.
 const submit = extract('examSubmit');

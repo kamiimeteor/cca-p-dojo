@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { randomUUID } = require('node:crypto');
-const { hashesForText, checkQuestions, loadSampleReferences, extractSamples } = require('./check-sample-overlap');
+const { hashesForText, checkQuestions, checkContent, loadContent, loadSampleReferences, extractSamples } = require('./check-sample-overlap');
 const reference = hashesForText('robots painted glowing rocks');
 assert.equal(reference.size, 1);
 assert.deepEqual(reference, hashesForText('ＲＯＢＯＴＳ, PAINTED; GLOWING—ROCKS'));
@@ -29,6 +29,40 @@ const structure = 'Sample 1 · Synthetic\nAmber birds circle towers.\nA.Copper\n
 assert.equal(extractSamples(structure), structure);
 assert.equal(extractSamples(structure.replace('D.Zinc', 'Zinc')), null);
 assert.equal(extractSamples(structure.replace('Sample 1: A.', 'Result:')), null);
+// Load real file shapes: prose, lists, tables, metadata, and question overlays
+// must all be scanned. Exempt only the official objective title field.
+const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'cca-overlap-'));
+try {
+  const dir = path.join(fixture, 'cca-p/assets/data');
+  fs.mkdirSync(dir, { recursive: true });
+  const phrase = 'robot paint glow rock';
+  const section = { id: '3.1', title: '中文标题', blocks: [
+    { t: 'p', v: `中文正文 ${phrase}` }, { t: 'list', v: [phrase] },
+    { t: 'table', head: [phrase], rows: [[phrase]] },
+  ] };
+  fs.writeFileSync(path.join(dir, 'notes.js'), `const EXAM_META = ${JSON.stringify({ note: phrase })};
+    const NOTES = ${JSON.stringify([{ id: 'd3', blurb: phrase, sections: [section] }])};`);
+  fs.writeFileSync(path.join(dir, 'content.en.js'), `const CONTENT_EN = ${JSON.stringify({
+    domains: { d3: { blurb: phrase } },
+    sections: {
+      '3.1': { title: phrase, blocks: [{ v: phrase }, { title: phrase, v: [phrase] },
+        { head: [phrase], rows: [[phrase]] }] },
+      'R.1': { title: phrase, blocks: [] },
+    }, questions: {},
+  })};`);
+  fs.writeFileSync(path.join(dir, 'content.en.q1.js'), `CONTENT_EN.questions.q = { q: ${JSON.stringify(phrase)} };`);
+  const fields = checkContent(loadContent(fixture), reference).map((hit) => hit.field).sort();
+  assert.deepEqual(fields, [
+    'content.notes.EXAM_META.note', 'content.notes.NOTES.0.blurb',
+    'content.notes.NOTES.0.sections.0.blocks.0.v', 'content.notes.NOTES.0.sections.0.blocks.1.v.0',
+    'content.notes.NOTES.0.sections.0.blocks.2.head.0', 'content.notes.NOTES.0.sections.0.blocks.2.rows.0.0',
+    'content.english.domains.d3.blurb', 'content.english.sections.3.1.blocks.0.v',
+    'content.english.sections.3.1.blocks.1.title', 'content.english.sections.3.1.blocks.1.v.0',
+    'content.english.sections.3.1.blocks.2.head.0', 'content.english.sections.3.1.blocks.2.rows.0.0',
+    'content.english.sections.R.1.title', 'content.english.questions.q.q',
+  ].sort());
+} finally { fs.rmSync(fixture, { recursive: true, force: true }); }
+console.log('✓ 笔记全文、元数据、英文题目均检出；仅官方 objective 标题字段豁免');
 console.log('✓ 合成屈折、双写辅音、通用词过滤、结构解析与无资料跳过测试通过');
 const cache = path.join(__dirname, '../source/official-samples.txt');
 if (!fs.existsSync(cache)) {
