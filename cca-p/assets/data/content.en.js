@@ -39,7 +39,79 @@ const CONTENT_EN = {
       "title": "Translate business problems into Claude-based AI solutions",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Decide whether an LLM is needed, then define a task with acceptance criteria, constraints, and a failure path.",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Requirement (engineering heuristics)",
+            "Design and acceptance"
+          ],
+          "rows": [
+            [
+              "Rules fully describe the task",
+              "Use ordinary code for tax calculations and fixed field validation. Claude can explain the result while code remains responsible for arithmetic."
+            ],
+            [
+              "Unstructured language needs interpretation",
+              "Turn “improve support efficiency” into ticket classification, evidence lookup, and response drafting. Check classification accuracy, supporting evidence, and editing effort separately."
+            ],
+            [
+              "Success criteria",
+              "Specify the input distribution, expected outcome, evaluation set, quality floor, completion deadline, and cost per successful task. Compare with the existing process."
+            ]
+          ]
+        },
+        {
+          "v": "Constraint checklist (engineering heuristics): check data access and freshness, sensitive-data minimization, storage location and retention, latency and cost budgets, consequences of errors, and ownership of exceptions and required approvals. Test representative inputs alongside missing, ambiguous, and out-of-scope inputs. Resolve missing evidence or acceptance criteria before expanding the design."
+        },
+        {
+          "v": "Anthropic recommends starting with the simplest viable design; for many applications, optimizing a single call with retrieval and examples in context is usually sufficient. Architectural simplicity does not require the smallest model. The model-selection guide offers both efficiency-first and capability-first starting points, to be tested on actual tasks."
+        },
+        {
+          "v": [
+            "If deterministic software already meets the need → keep it, because generated output adds no necessary capability.",
+            "If the task requires grounded language interpretation or generation → start with one call to establish quality and cost baselines.",
+            "If enterprise knowledge is missing → evaluate context provision or retrieval, because autonomous loops cannot substitute for evidence.",
+            "If errors have serious consequences and acceptance is unreliable → limit the system to drafts for human review, because unverified results should not trigger execution."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Choose an agent framework before defining the need: there is no demonstrated benefit for the complexity.",
+            "Ask for “better answers” without a rubric: nobody can determine whether the result passes.",
+            "Treat one polished demo as an evaluation: it does not cover production inputs or failure paths."
+          ],
+          "title": "Common traps"
+        },
+        {
+          "head": [
+            "Scenario signal",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Exact calculation or fixed rules",
+              "Conventional software"
+            ],
+            [
+              "Classification, summaries, drafts",
+              "Evaluate a single call first"
+            ],
+            [
+              "Missing internal knowledge",
+              "Provide authorized data and evidence"
+            ],
+            [
+              "High cost of errors",
+              "Limit automated execution"
+            ],
+            [
+              "Only “improve efficiency” is specified",
+              "Define tasks and baseline metrics"
+            ]
+          ]
         }
       ]
     },
@@ -47,7 +119,83 @@ const CONTENT_EN = {
       "title": "Design end-to-end architectures (input → processing → output → feedback loops)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Define interfaces, checks, and failure paths for input, processing, output, and feedback so a local error does not propagate into business execution.",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Layer",
+            "Responsibilities and failure isolation (engineering heuristics)"
+          ],
+          "rows": [
+            [
+              "Input",
+              "Validate format, clean corrupted text, redact sensitive data, and assemble authorized context. Return incomplete inputs for clarification; quarantine external material containing injected instructions."
+            ],
+            [
+              "Processing",
+              "Select the model, retrieve evidence, and call tools. Missing evidence triggers further lookup or human review. Bound timeouts and retries; check execution state before retrying writes."
+            ],
+            [
+              "Output",
+              "Pass structured results to application checks for factual support, business rules, and authorization. Block invalid results and require approval for high-risk actions according to policy."
+            ],
+            [
+              "Feedback",
+              "Link user feedback to task outcomes, latency, and cost. Review and redact failures before adding them to evaluations; run regression checks before release and consider rollback if quality declines."
+            ]
+          ]
+        },
+        {
+          "v": "Tool execution has explicit boundaries: client tools run in the application, while server tools run at Anthropic. A requested call is not proof of completion; custom business tools still need authorization at execution. Retrieved text and tool results are untrusted input, and prompt instructions do not replace access control."
+        },
+        {
+          "v": "Structured outputs provides JSON outputs for response formatting and strict tool use for tool names and inputs. Handle `refusal`, `max_tokens`, and the documented casing exception for string `enum` / `const` values. A format constraint does not establish factual correctness. Source: Anthropic Structured outputs, checked 2026-09-27."
+        },
+        {
+          "v": [
+            "If source material is missing or stale → fix ingestion and retrieval, because changing models cannot repair the source.",
+            "If downstream code requires stable fields → combine structured outputs with business validation, because parsing and authorizing execution are separate checks.",
+            "If a tool fails → isolate the step and report its state, because guessing silently can fabricate success.",
+            "If production feedback worsens → review examples and run regression evaluations, because votes and complaints are not ground-truth labels."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Check only HTTP success: the response may contain a refusal or incomplete output.",
+            "Restart the entire chain after failure: completed writes may run twice.",
+            "Feed raw feedback into training or reference answers: noise and sensitive information remain unchecked."
+          ],
+          "title": "Common traps"
+        },
+        {
+          "head": [
+            "Scenario signal",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Corrupted text or missing fields",
+              "Validate and repair input"
+            ],
+            [
+              "An answer without supporting evidence",
+              "Inspect retrieval and avoid guessing"
+            ],
+            [
+              "Valid JSON, incorrect amount",
+              "Validate business semantics"
+            ],
+            [
+              "Tool timeout with unknown write status",
+              "Check state before retrying"
+            ],
+            [
+              "Complaints rise after release",
+              "Review feedback → regressions → fix or rollback"
+            ]
+          ]
         }
       ]
     },
@@ -55,7 +203,91 @@ const CONTENT_EN = {
       "title": "Select appropriate architectural patterns (workflow, agentic, augmented LLM)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Choose by control flow: use a workflow for paths prescribed in code; consider an agent when the model must choose subsequent actions from feedback.",
+          "title": "What this objective tests"
+        },
+        {
+          "v": "An augmented LLM adds capabilities such as retrieval, tools, and memory. It is a building block for both workflows and agents, not a mutually exclusive architecture tier. One tool call does not establish that the whole system is autonomous. The taxonomy below follows Anthropic’s Building effective agents."
+        },
+        {
+          "head": [
+            "Workflow pattern",
+            "Mechanism and fit"
+          ],
+          "rows": [
+            [
+              "Prompt chaining",
+              "Pass output through successive steps, with optional programmatic gates. Fits tasks that break cleanly into fixed subtasks, trading latency for higher accuracy."
+            ],
+            [
+              "Routing",
+              "Classify input and dispatch to a specialized path. Works well when categories are distinct, benefit from separate handling, and can be classified accurately."
+            ],
+            [
+              "Parallelization",
+              "Sectioning runs independent subtasks concurrently; voting aggregates repeated attempts at the same task."
+            ],
+            [
+              "Orchestrator-workers",
+              "A central LLM assigns subtasks and combines results. Unlike fixed parallelization, the subtasks depend on the input."
+            ],
+            [
+              "Evaluator-optimizer",
+              "Alternate generation and evaluation feedback. Particularly effective when criteria are clear and revision provides measurable value."
+            ]
+          ]
+        },
+        {
+          "v": "Agents suit open-ended tasks whose steps cannot be specified in advance. Anthropic notes that agentic systems often exchange latency and cost for better performance; autonomy adds cost and can compound errors, so it recommends extensive sandbox testing and suitable guardrails. Engineering heuristic: evaluate a simple design first; set budgets, stopping conditions, and human handoff. Dynamic delegation can sit within a prescribed workflow, so an LLM planner does not make all control flow autonomous."
+        },
+        {
+          "v": [
+            "If steps are stable and must run consistently → choose a workflow with explicit stage checks.",
+            "If the only gap is knowledge or tools → an augmented LLM with retrieval, tools, or memory may suffice without adding a workflow or agent, because a capability gap alone does not establish a need for additional orchestration.",
+            "If discoveries keep changing the task → consider an agent, because a fixed path may not cover the required actions.",
+            "If subtasks become clear only after input arrives → consider orchestrator-workers, because fixed partitions may omit needed work."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Call every sequence of model calls an agent: this ignores who controls execution.",
+            "Confuse voting with sectioning: one repeats the task; the other divides the work.",
+            "Revise repeatedly without evaluation criteria: rewrites may add no quality."
+          ],
+          "title": "Common traps"
+        },
+        {
+          "head": [
+            "Scenario signal",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Fixed stages with acceptance gates",
+              "Prompt chaining"
+            ],
+            [
+              "Request categories need specialized paths",
+              "Routing"
+            ],
+            [
+              "Independent partitions / repeated judgments",
+              "Sectioning / voting"
+            ],
+            [
+              "Subtasks depend on the input",
+              "Orchestrator-workers"
+            ],
+            [
+              "Clear criteria and useful revision feedback",
+              "Evaluator-optimizer"
+            ],
+            [
+              "Discoveries determine the next action",
+              "Agent with budgets and stopping conditions"
+            ]
+          ]
         }
       ]
     },
@@ -63,7 +295,79 @@ const CONTENT_EN = {
       "title": "Design multi-agent systems and orchestration strategies",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Multiple agents suit independent exploration and separate contexts when the benefits justify token and coordination costs.",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Orchestration element",
+            "Design boundary"
+          ],
+          "rows": [
+            [
+              "Orchestrator-worker",
+              "A lead agent plans, delegates, and synthesizes results. Subagents explore in separate contexts and return summaries with evidence."
+            ],
+            [
+              "Delegation guidance (Anthropic)",
+              "Define the objective, output format, tool and source guidance, and task boundaries. Engineering heuristics: also assign acceptance checks, ownership, deadlines, and budgets."
+            ],
+            [
+              "Coordination (engineering heuristics)",
+              "Let the lead track assignments and resolve conflicting evidence. Identify and version shared artifacts; avoid concurrent changes to the same state where possible."
+            ]
+          ]
+        },
+        {
+          "v": "Anthropic’s 2025 research-system blog reported a 90.2% improvement over a single Opus 4 on its internal research evaluation using an Opus 4 lead and Sonnet 4 subagents. In its BrowseComp analysis, token usage alone explained 80% of the performance variance. Agents used roughly 4× chat tokens and multi-agent systems roughly 15×; parallelization reduced research time by up to 90% on complex queries. These are historical findings, not current model recommendations, universal cost multipliers, or SLAs."
+        },
+        {
+          "v": "Failure handling (engineering heuristics): preserve checkpoints and completed results; bound retries for failed subtasks and inspect side effects before reassigning work. Flag missing required evidence or escalate. Synchronous aggregation can wait for the slowest worker; asynchronous execution can reduce waiting but needs handling for late results, state consistency, and error propagation. Separate contexts do not enforce separate permissions."
+        },
+        {
+          "v": [
+            "If valuable research has independent directions → evaluate multiple agents for parallel exploration and separate contexts.",
+            "If agents need extensive shared context or tasks have tight dependencies → prefer one agent or a sequential workflow, because handoffs require repeated synchronization; the source’s assessment of poor fit was a 2025 observation.",
+            "If the work is fixed independent queries → try parallel tools or calls first; autonomous subagents may add no value.",
+            "If one subtask fails → retain accepted results and recover locally, because restarting everything repeats costs and possible side effects."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Assume more agents are always better: delegation and synthesis also consume tokens.",
+            "Give every subagent the full history: this undermines the context split.",
+            "Present partial successes as a complete answer: required branches may still lack evidence."
+          ],
+          "title": "Common traps"
+        },
+        {
+          "head": [
+            "Scenario signal",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Valuable, independent research directions",
+              "Evaluate parallel subagents"
+            ],
+            [
+              "Shared state and tight dependencies",
+              "Prefer one agent or a sequential workflow, based on the 2025 observations"
+            ],
+            [
+              "Duplicate searches or missing scope",
+              "Clarify delegation contracts"
+            ],
+            [
+              "One failure restarts everything",
+              "Checkpoints and local recovery"
+            ],
+            [
+              "Stragglers and late results",
+              "Weigh synchronous and asynchronous coordination"
+            ]
+          ]
         }
       ]
     },
@@ -71,7 +375,79 @@ const CONTENT_EN = {
       "title": "Apply decomposition techniques for complex problem solving",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Decompose around dependencies, require a verifiable result from each subtask, and check that the combined result meets the original objective.",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Decomposition method (engineering heuristics)",
+            "Fit and acceptance"
+          ],
+          "rows": [
+            [
+              "By step",
+              "An earlier result feeds the next stage, such as requirements → proposal → validation. Add gates so invalid input does not propagate."
+            ],
+            [
+              "By data partition",
+              "Assign independent records by document or entity. Use a common output schema; verify coverage, duplicates, and aggregation while preserving links across partitions."
+            ],
+            [
+              "By expertise",
+              "Assign security, data, or performance analysis. Each result includes evidence and impact; a synthesizer resolves conflicts and constraints spanning specialties."
+            ]
+          ]
+        },
+        {
+          "v": "Subtask contract (engineering heuristics): define inputs, outputs, dependencies, sources, completion checks, and failure states. Check summaries for required facts, extraction against source fields, and code with behavioral tests. Passing subtasks still need an integration check for objective coverage, compatible results, and the final business state. An agent’s completion claim is insufficient."
+        },
+        {
+          "v": "Granularity trade-offs (engineering heuristics): small subtasks make failures easier to locate but add calls, repeated context, and merge costs. Sequential stages add waiting; parallel branches still need required results and aggregation. Larger tasks reduce handoffs but may combine unrelated requirements. Map dependencies and measure quality, completion latency, and total cost. Keep work together when it requires repeated sharing of the full context, has no meaningful subtask checks, or already passes in one call."
+        },
+        {
+          "v": [
+            "If a later stage needs an earlier conclusion → decompose sequentially with gates, because early parallel execution lacks settled inputs.",
+            "If records are independent and aggregation is defined → partition the data, because coverage remains verifiable after parallel work.",
+            "If one object needs several specialist reviews → divide by expertise, because each perspective has distinct checks.",
+            "If partitioning loses relationships or costs exceed benefits → use fewer parts, because locally correct results may not combine correctly."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Split every task by fixed text length: this may sever entity and constraint relationships.",
+            "Create an agent for every small step: ordinary calls can perform decomposition without autonomous planning.",
+            "Release once every subtask passes: integration failures and merge conflicts remain unchecked."
+          ],
+          "title": "Common traps"
+        },
+        {
+          "head": [
+            "Scenario signal",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Explicit ordering dependencies",
+              "Sequential decomposition with gates"
+            ],
+            [
+              "Many independent records",
+              "Partition data and verify coverage"
+            ],
+            [
+              "Different security and performance perspectives",
+              "Specialist decomposition and conflict resolution"
+            ],
+            [
+              "Relationships repeatedly lost across partitions",
+              "Revise boundaries or keep the task whole"
+            ],
+            [
+              "Calls grow without quality gains",
+              "Merge overly small subtasks"
+            ]
+          ]
         }
       ]
     },
@@ -79,7 +455,87 @@ const CONTENT_EN = {
       "title": "Align solutions to business value pillars (efficiency, transformation, productivity, cost, performance SLAs)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Connect architecture choices to business outcomes and demonstrate gains within quality floors and service commitments. Communication methods belong in D6.",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Value pillar",
+            "Metric → design (engineering heuristics)"
+          ],
+          "rows": [
+            [
+              "Efficiency",
+              "Cycle time, waiting, and rework → classification, extraction, and fixed workflows; verify that process time actually falls."
+            ],
+            [
+              "Transformation",
+              "Coverage, adoption, and successful delivery of previously impractical services → pilot a new service; evaluate agents only if it needs dynamic exploration."
+            ],
+            [
+              "Productivity",
+              "Accepted output per person per unit of time and review effort → drafting and coding assistance; subtract correction effort rather than count generated volume."
+            ],
+            [
+              "Cost",
+              "Total cost per successful task → routing, input reuse, and batches; include tools, retries, human work, and operations. Where effort is supported, tuning it is often a better way to manage the trade-off than changing models, according to Anthropic’s model-selection guide."
+            ],
+            [
+              "Performance SLAs",
+              "End-to-end latency percentiles, availability, and a quality floor → bound the call chain, configure timeouts and fallback, provision capacity, and validate under load."
+            ]
+          ]
+        },
+        {
+          "v": "SLA measurement convention (engineering heuristic): p95 and p99 are the 95th and 99th latency percentiles. Define the window, traffic population, and treatment of failures. Availability can use the fraction of eligible requests served successfully; check the quality floor separately. These are application metrics, not claimed Anthropic contract terms. Measure first-token latency separately from task completion; streaming can improve visible responsiveness without proving the completion deadline is met."
+        },
+        {
+          "v": "Cost mechanism: Message Batches charges 50% of standard API prices. Most batches finish within an hour, but that is not guaranteed; requests still unfinished at 24 hours expire. This fits deferrable offline work, not an immediate-response SLA. Source: Anthropic Batch processing, checked 2026-09-27."
+        },
+        {
+          "v": [
+            "If the goal is a shorter process → locate waiting and rework first, because a faster model may not shorten the whole process.",
+            "If the goal is lower unit cost → compare total cost per successful task, because retries and review can cancel a lower API price.",
+            "If faster delivery must preserve a quality floor → test both, because removing required checks creates misleading gains.",
+            "If the goal is a new business capability → pilot adoption and delivery, because agent count is not a transformation metric."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Use average latency alone: it cannot establish compliance for slow requests.",
+            "Count HTTP 200 as accepted delivery: the task may be incomplete or the content unacceptable.",
+            "Treat fewer tokens as the same reduction in total cost: this omits human work, tools, and failures."
+          ],
+          "title": "Common traps"
+        },
+        {
+          "head": [
+            "Scenario signal",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Shorter ticket handling cycle",
+              "Efficiency: cycle time and rework"
+            ],
+            [
+              "A previously impractical new service",
+              "Transformation: adoption and successful delivery"
+            ],
+            [
+              "More accepted output per person",
+              "Productivity: output after review effort"
+            ],
+            [
+              "Large offline volume with flexible timing",
+              "Cost: evaluate batching"
+            ],
+            [
+              "Slow requests time out or service is unstable",
+              "SLA: assess percentiles, availability, and quality together"
+            ]
+          ]
         }
       ]
     },

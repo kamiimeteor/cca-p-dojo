@@ -6,6 +6,50 @@ MCP 授权与传输条目按 2025-11-25 版核对，latest（2026-07-28）中上
 
 各节标为「经验法则」的选型、控制设计与维护策略是工程判断，不是 Anthropic 的统一强制规定。
 
+D1 的设计表、决策规则与题目信号是原创教学归纳；其中标注的经验法则不构成官方强制要求。1.4 的旧模型名仅用于还原 2025 年实验；1.6 的 SLA 度量是应用约定，不是 Anthropic 合同承诺。
+
+## 1.1
+
+- [https://www.anthropic.com/engineering/building-effective-agents](https://www.anthropic.com/engineering/building-effective-agents)：核实先采用最简单可行架构，以及单次调用、检索和示例通常已足够；不把建议写成强制流程。
+- [https://platform.claude.com/docs/en/test-and-evaluate/develop-tests](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实具体、可测、可实现、与业务相关的成功标准，代表性输入、边界样本及多维度评估。
+- [https://platform.claude.com/docs/en/about-claude/models/choosing-a-model](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model)：核实效率优先与能力优先两种模型选型起点；“架构简单”不推导为“总用最小模型”。
+- [https://platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview)：核实当前主比较表为 Fable 5.1、Opus 5.5、Sonnet 5、Haiku 4.5；D1 不复述模型配置或 thinking 参数，避免越入 D2。
+- [https://www.anthropic.com/engineering/how-we-contain-claude](https://www.anthropic.com/engineering/how-we-contain-claude)：核实模型指令与执行环境权限的边界；数据与人工复核的具体方案标为经验法则。
+
+## 1.2
+
+- [https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)：核实 client tools 由应用执行、server tools 由 Anthropic 执行，以及模型发出调用与实际执行的区别。
+- [https://platform.claude.com/docs/en/build-with-claude/structured-outputs](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)：核实 JSON outputs / strict tool use 两种功能及拒绝、max_tokens、字符串 enum / const 大小写例外；网页抓取超时后实际读取同路径 .md 官方版本。
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)：核实外部材料与工具结果的注入风险、输入检查和持续监控；不声称模型提示可替代权限控制。
+- [https://www.anthropic.com/engineering/how-we-contain-claude](https://www.anthropic.com/engineering/how-we-contain-claude)：核实模型行为控制不能代替环境访问边界。
+- [https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实线上监控、用户反馈、人工复核与离线评估互补；样本回流、局部重试与回滚方案为经验法则。
+
+## 1.3
+
+- [https://www.anthropic.com/engineering/building-effective-agents](https://www.anthropic.com/engineering/building-effective-agents)：核实 augmented LLM 基础构件、workflow / agent 的控制流区别；完整列出五种 workflow 与 sectioning / voting 两种并行变体，保留固定子任务、延迟换准确率及条件性适用建议；核实 agent 的成本、错误累积与沙箱测试建议。
+- [https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)：核实工具调用机制，辅助区分一次工具调用与整体自主控制流。
+
+## 1.4
+
+- [https://www.anthropic.com/engineering/multi-agent-research-system](https://www.anthropic.com/engineering/multi-agent-research-system)：核实 orchestrator-worker、委托边界、同步瓶颈、异步一致性与局部恢复；90.2%、4× / 15×、最多 90% 均注明历史实验背景，不当成 SLA；补充 BrowseComp 分析中 token 用量解释 80% 性能方差，以及不适用情形的 2025 年“目前”限定；官方委托建议包括目标、输出格式、工具与来源指引、任务边界。
+- [https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)：核实独立上下文与摘要返回；上下文分工不是权限隔离。
+- [https://www.anthropic.com/engineering/how-we-contain-claude](https://www.anthropic.com/engineering/how-we-contain-claude)：核实工具与环境权限须单独约束；共享产物版本与重派前查副作用为经验法则。
+
+## 1.5
+
+- [https://www.anthropic.com/engineering/building-effective-agents](https://www.anthropic.com/engineering/building-effective-agents)：核实链式步骤的程序检查门、独立并行、分工及增加复杂度需有收益的原则；三种分解维度是本文教学归纳。
+- [https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实 outcome 是环境最终状态、agent 自称完成不等于任务完成；分步验收须配合整体验收。
+- [https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)：核实上下文容量与子任务隔离取舍；分片覆盖、契约与粒度选择均标为经验法则。
+
+## 1.6
+
+- [https://platform.claude.com/docs/en/test-and-evaluate/develop-tests](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实多维业务成功标准，质量、价格、响应时间与 uptime 指标及延迟分布示例；正文 p95 / p99 为百分位定义，窗口和可用性口径为本文度量约定，非供应商合同。
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency)：核实 TTFT 与完整响应的区别、流式交付改善可见等待，不推导为完成 SLA 保证。
+- [https://platform.claude.com/docs/en/build-with-claude/batch-processing](https://platform.claude.com/docs/en/build-with-claude/batch-processing)：核实按标准 API 价格 50% 收费、多数批次一小时内完成但不保证，以及 24 小时未完成请求过期。
+- [https://platform.claude.com/docs/en/about-claude/models/choosing-a-model](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model)：核实按任务能力、速度、成本选模型，以及多模型策略；该页明确建议调节 effort 往往比换模型更利于取舍。具体价值支柱到架构的对应为经验法则。
+- [https://platform.claude.com/docs/en/build-with-claude/effort](https://platform.claude.com/docs/en/build-with-claude/effort)：核实支持该参数的模型可在模型内权衡能力、延迟和 token 成本，并应按任务评估；“往往比换模型更好”的直接出处是上方选型页，不冒充本页原句。
+- [https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实业务结果、延迟、token、成本及错误率应通过评估和生产反馈验证；不以 HTTP 成功或模型自述替代任务验收。
+
 ## 3.1
 
 - [https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool)：核实超过 30–50 个工具后选择准确率下降，以及 10+ 工具、定义超过 10,000 tokens 等建议使用条件。

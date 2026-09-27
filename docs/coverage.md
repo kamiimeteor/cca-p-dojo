@@ -1,6 +1,6 @@
 # 蓝图覆盖图
 
-生成时间：2026-09-27T19:22:13.332Z
+生成时间：2026-09-27T20:41:42.327Z
 
 由 scripts/gen-coverage.js 生成，勿手改。
 
@@ -8,12 +8,12 @@
 
 | Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
 | --- | --- | --- | --- | --- | --- |
-| 1.1 | 把业务问题转化为 Claude 方案 | Translate business problems into Claude-based AI solutions | 待写 | — | 0 |
-| 1.2 | 端到端架构：输入→处理→输出→反馈闭环 | Design end-to-end architectures (input → processing → output → feedback loops) | 待写 | — | 0 |
-| 1.3 | 选择架构模式：workflow / agentic / augmented LLM | Select appropriate architectural patterns (workflow, agentic, augmented LLM) | 待写 | — | 0 |
-| 1.4 | 多 Agent 系统与编排策略 | Design multi-agent systems and orchestration strategies | 待写 | — | 0 |
-| 1.5 | 复杂问题的分解技术 | Apply decomposition techniques for complex problem solving | 待写 | — | 0 |
-| 1.6 | 对齐业务价值支柱 | Align solutions to business value pillars (efficiency, transformation, productivity, cost, performance SLAs) | 待写 | — | 0 |
+| 1.1 | 把业务问题转化为 Claude 方案 | Translate business problems into Claude-based AI solutions | ✓ | — | 0 |
+| 1.2 | 端到端架构：输入→处理→输出→反馈闭环 | Design end-to-end architectures (input → processing → output → feedback loops) | ✓ | — | 0 |
+| 1.3 | 选择架构模式：workflow / agentic / augmented LLM | Select appropriate architectural patterns (workflow, agentic, augmented LLM) | ✓ | — | 0 |
+| 1.4 | 多 Agent 系统与编排策略 | Design multi-agent systems and orchestration strategies | ✓ | — | 0 |
+| 1.5 | 复杂问题的分解技术 | Apply decomposition techniques for complex problem solving | ✓ | — | 0 |
+| 1.6 | 对齐业务价值支柱 | Align solutions to business value pillars (efficiency, transformation, productivity, cost, performance SLAs) | ✓ | — | 0 |
 
 ## d2 Claude 模型、提示与上下文工程 / Claude Models, Prompting & Context Engineering
 
