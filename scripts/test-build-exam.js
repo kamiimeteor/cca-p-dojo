@@ -3,6 +3,8 @@ const assert = require('assert');
 const fs = require('fs');
 const vm = require('vm');
 const read = (path) => fs.readFileSync(path, 'utf8');
+const englishFiles = fs.readdirSync('cca-p/assets/data')
+  .filter((name) => /^content\.en\.q.*\.js$/.test(name)).sort();
 const source = read('cca-p/assets/app.js');
 const extract = (name) => {
   const match = source.match(new RegExp(`^function ${name}\\([^]*?^}\\n`, 'm'));
@@ -14,8 +16,7 @@ vm.runInContext([
   read('cca-p/assets/data/notes.js'),
   read('cca-p/assets/data/questions.js'),
   read('cca-p/assets/data/content.en.js'),
-  read('cca-p/assets/data/content.en.q1.js'),
-  read('cca-p/assets/data/content.en.q2.js'),
+  ...englishFiles.map((file) => read(`cca-p/assets/data/${file}`)),
   // 翻转输入便于断言选题确实经过随机排列函数，且不依赖随机测试结果。
   'const shuffle = (items) => [...items].reverse();',
   extract('examQuotas'), extract('buildExam'),
@@ -63,6 +64,23 @@ for (const q of QUESTIONS) {
     assert(Number.isInteger(q.near) && q.near !== q.a);
   }
 }
+// 真实题库按各域可用题数抽取，增长后仍检查完整题库和配额边界。
+const bankSnapshot = JSON.stringify(context.data.QUESTIONS);
+const actual = plain(context.buildExam(63));
+const available = quotas.map(({ d, n }) => Math.min(n, QUESTIONS.filter((q) => q.d === d).length));
+assert.strictEqual(actual.qs.length, available.reduce((sum, n) => sum + n, 0));
+assert.strictEqual(new Set(actual.qs.map((q) => q.id)).size, actual.qs.length);
+assert.deepStrictEqual(quotas.map(({ d }) => actual.qs.filter((q) => q.d === d).length), available);
+for (const q of actual.qs) assert.deepStrictEqual(q, QUESTIONS.find((item) => item.id === q.id));
+assert.deepStrictEqual(actual.scenarios, []);
+assert.strictEqual(JSON.stringify(context.data.QUESTIONS), bankSnapshot, '抽题不能修改真实题库');
+// 三道种子题单独作为稀疏 fixture，保留原来的精确抽题回归。
+context.seedQuestions = ['q001', 'q002', 'q003'].map((id) => {
+  const matches = QUESTIONS.filter((q) => q.id === id);
+  assert.strictEqual(matches.length, 1, `种子题 ${id} 必须存在且唯一`);
+  return matches[0];
+});
+vm.runInContext('QUESTIONS.splice(0, QUESTIONS.length, ...seedQuestions);', context);
 const sparse = plain(context.buildExam(63));
 assert.strictEqual(sparse.qs.length, 3);
 assert.deepStrictEqual(sparse.qs.map((q) => q.id).sort(), ['q001', 'q002', 'q003']);
@@ -88,7 +106,7 @@ assert.strictEqual(new Set(full.qs.map((q) => q.sc)).size, 7);
 assert.deepStrictEqual(full.scenarios, []);
 vm.runInContext('QUESTIONS.length = 0;', context);
 assert.deepStrictEqual(plain(context.buildExam(63)), { qs: [], scenarios: [] });
-console.log(`✓ 63 题配额 11/8/12/10/9/9/4；3 题及空题库安全抽取；42 节占位状态一致，${writtenSections} 节正文双语完整，D3 / R.1 无占位回退`);
+console.log(`✓ ${QUESTIONS.length} 道真实题按配额抽取 ${actual.qs.length} 道；63 题配额 11/8/12/10/9/9/4；三道种子 fixture 及空题库安全抽取；42 节占位状态一致，${writtenSections} 节正文双语完整，D3 / R.1 无占位回退`);
 
 // A perfect score on a short bank is practice, not a full-exam pass.
 const submit = extract('examSubmit');

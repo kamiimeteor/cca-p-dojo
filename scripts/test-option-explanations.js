@@ -13,12 +13,26 @@ const questions = zhContext.__QUESTIONS__;
 
 const enContext = { CONTENT_EN: { questions: {} } };
 vm.createContext(enContext);
-vm.runInContext(read('cca-p/assets/data/content.en.q1.js'), enContext);
-vm.runInContext(read('cca-p/assets/data/content.en.q2.js'), enContext);
+const englishFiles = fs.readdirSync('cca-p/assets/data')
+  .filter((name) => /^content\.en\.q.*\.js$/.test(name)).sort();
+const indexHtml = read('cca-p/index.html').replace(/<!--[\s\S]*?-->/g, '');
+const indexScripts = [...indexHtml.matchAll(/<script\b[^>]*\bsrc\s*=\s*(["'])(.*?)\1[^>]*>/gi)]
+  .map((match) => match[2].split(/[?#]/)[0].replace(/^\.\//, ''))
+  .filter((src) => /^assets\/data\/content\.en\.q.*\.js$/.test(src))
+  .map((src) => src.slice('assets/data/'.length)).sort();
+assert.deepStrictEqual(indexScripts, englishFiles,
+  'index.html 的英文题目 script 标签必须与 content.en.q*.js 文件逐一对应');
+for (const file of englishFiles) {
+  vm.runInContext(read(`cca-p/assets/data/${file}`), enContext);
+}
 const english = enContext.CONTENT_EN.questions;
 
-assert.equal(questions.length, 3, '中文题库应有 3 题');
-assert.equal(Object.keys(english).length, 3, '英文题库应覆盖 3 题');
+const seeds = ['q001', 'q002', 'q003'].map((id) => {
+  const matches = questions.filter((q) => q.id === id);
+  assert.equal(matches.length, 1, `种子题 ${id} 必须存在且唯一`);
+  return matches[0];
+});
+assert.equal(Object.keys(english).length, questions.length, '英文题库应覆盖全部中文题目');
 assert.deepEqual(
   Object.keys(english).sort(),
   questions.map((q) => q.id).sort(),
@@ -145,7 +159,6 @@ for (const [theme, block] of [['light', cssBlock(':root')], ['dark', cssBlock('\
   assert(contrast(paper, cssValue(block, 'bad')) >= 4.5, `${theme} 主题错选项字母对比度不足`);
 }
 
-console.log('✓ 3 道题的中英文逐项解析完整，错误答案表格仅在答错时展示');
-
-assert.deepStrictEqual(JSON.parse(JSON.stringify(questions.map((q) => q.a))), [2, [1, 3], 1],
+assert.deepStrictEqual(JSON.parse(JSON.stringify(seeds.map((q) => q.a))), [2, [1, 3], 1],
   '种子题正确项应分别为 C、B/D、B');
+console.log(`✓ ${questions.length} 道题的中英文逐项解析完整，三道种子题答案不变，错误答案表格仅在答错时展示`);

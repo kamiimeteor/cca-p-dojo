@@ -361,7 +361,7 @@ const NOTES = [
           },
           {
             "t": "p",
-            "v": "Thinking 不是所有模型共用的开关。按当前官方文档，Opus 5.5 和 Fable 5.1 的 adaptive thinking 常开且不可关闭；Sonnet 5 默认开启但可关闭；Opus 4.7 需设置 `thinking.type: adaptive`。手动 `type: enabled` + `budget_tokens` 在 Opus / Sonnet 4.6 已弃用但仍可请求，Opus 4.7 起不再支持并返回 400；Haiku 4.5 仍只支持手动 extended thinking。来源：Anthropic Thinking、Extended thinking 与 Effort（2026-09-27 核对）；换模型时重查支持表。"
+            "v": "Thinking 不是所有模型共用的开关。按当前官方文档，Opus 5.5 和 Fable 5.1 的 adaptive thinking 常开且不可关闭；Sonnet 5 默认开启但可关闭；Opus 4.7 的 thinking 默认关闭，仅在设置 `thinking.type: adaptive` 时才启用。手动 `type: enabled` + `budget_tokens` 在 Opus / Sonnet 4.6 已弃用但仍可请求，Opus 4.7 起不再支持并返回 400；Haiku 4.5 仍只支持手动 extended thinking。来源：Anthropic Thinking、Extended thinking 与 Effort（2026-09-27 核对）；换模型时重查支持表。"
           },
           {
             "t": "p",

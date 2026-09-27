@@ -1,6 +1,6 @@
 # 蓝图覆盖图
 
-生成时间：2026-09-27T18:04:11.104Z
+生成时间：2026-09-27T19:22:13.332Z
 
 由 scripts/gen-coverage.js 生成，勿手改。
 
@@ -29,14 +29,14 @@
 
 | Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
 | --- | --- | --- | --- | --- | --- |
-| 3.1 | 工具/Agent 配置的能力膨胀 | Evaluate tool/agent configuration for capability bloat | ✓ | q001 | 1 |
-| 3.2 | 认证授权与安全缺口 | Analyze authentication and authorization requirements to identify security gaps | ✓ | — | 0 |
-| 3.3 | 准确率与延迟的取舍 | Evaluate accuracy-latency trade-offs and justify configuration decisions | ✓ | — | 0 |
-| 3.4 | 大规模可观测性与监控策略 | Analyze observability challenges and select monitoring strategies at scale | ✓ | — | 0 |
-| 3.5 | RAG 管道：分块与索引 | Design a RAG pipeline with appropriate chunking and indexing strategies | ✓ | — | 0 |
-| 3.6 | 按数据形态与查询模式选检索策略 | Apply retrieval strategies matched to data shape and query pattern | ✓ | — | 0 |
-| 3.7 | 集成机制：MCP / API·CLI / agent-to-agent | Evaluate connection protocols and select the appropriate integration mechanism (MCP, API/CLI, agent-to-agent) | ✓ | — | 0 |
-| 3.8 | 渐进式发现 vs 一次性全量上下文 | Evaluate progressive discovery vs. monolithic context strategy | ✓ | — | 0 |
+| 3.1 | 工具/Agent 配置的能力膨胀 | Evaluate tool/agent configuration for capability bloat | ✓ | q001, q004, q005, q006 | 4 |
+| 3.2 | 认证授权与安全缺口 | Analyze authentication and authorization requirements to identify security gaps | ✓ | q007, q008, q009, q010, q011 | 5 |
+| 3.3 | 准确率与延迟的取舍 | Evaluate accuracy-latency trade-offs and justify configuration decisions | ✓ | q012, q013, q014, q015 | 4 |
+| 3.4 | 大规模可观测性与监控策略 | Analyze observability challenges and select monitoring strategies at scale | ✓ | q016, q017, q018, q019 | 4 |
+| 3.5 | RAG 管道：分块与索引 | Design a RAG pipeline with appropriate chunking and indexing strategies | ✓ | q020, q021, q022, q023, q024 | 5 |
+| 3.6 | 按数据形态与查询模式选检索策略 | Apply retrieval strategies matched to data shape and query pattern | ✓ | q025, q026, q027, q028 | 4 |
+| 3.7 | 集成机制：MCP / API·CLI / agent-to-agent | Evaluate connection protocols and select the appropriate integration mechanism (MCP, API/CLI, agent-to-agent) | ✓ | q029, q030, q031, q032, q033 | 5 |
+| 3.8 | 渐进式发现 vs 一次性全量上下文 | Evaluate progressive discovery vs. monolithic context strategy | ✓ | q034, q035, q036, q037, q038 | 5 |
 
 ## d4 评估、测试与优化 / Evaluation, Testing & Optimization
 

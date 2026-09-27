@@ -308,7 +308,7 @@ const CONTENT_EN = {
           ]
         },
         {
-          "v": "Thinking is model-specific. Current docs state that adaptive thinking cannot be disabled on Opus 5.5 or Fable 5.1; Sonnet 5 defaults to thinking but permits disabling it; Opus 4.7 requires `thinking.type: adaptive`. Manual `type: enabled` with `budget_tokens` is deprecated but accepted on Opus / Sonnet 4.6; Opus 4.7 onward rejects it with 400. Haiku 4.5 supports only manual extended thinking. Sources: Anthropic Thinking, Extended thinking, and Effort, checked 2026-09-27. Recheck model support when switching."
+          "v": "Thinking is model-specific. Current docs state that adaptive thinking cannot be disabled on Opus 5.5 or Fable 5.1; Sonnet 5 defaults to thinking but permits disabling it; Opus 4.7 thinks only when `thinking.type: adaptive` is set (default off). Manual `type: enabled` with `budget_tokens` is deprecated but accepted on Opus / Sonnet 4.6; Opus 4.7 onward rejects it with 400. Haiku 4.5 supports only manual extended thinking. Sources: Anthropic Thinking, Extended thinking, and Effort, checked 2026-09-27. Recheck model support when switching."
         },
         {
           "v": "Streaming improves visible responsiveness without guaranteeing faster completion or better accuracy. Message Batches processes independent requests asynchronously at 50% of standard API prices (a 50% saving). Most batches finish within one hour, without a one-hour guarantee. Processing ends when all requests finish or after 24 hours; unfinished requests then expire. Use it for work that can wait. Parallel calls do not reduce total call count. Source: Anthropic Batch processing, checked 2026-09-27."

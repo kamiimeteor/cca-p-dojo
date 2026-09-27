@@ -81,9 +81,22 @@ assert.equal(checkBlueprint(empty).exitCode, 0);
 assert.equal(checkBlueprint(empty, { strict: true }).exitCode, 1);
 
 const real = loadBlueprint();
-assert.equal(real.questions.length, 3, '当前应为三道种子题');
-assert.equal(checkBlueprint(real).exitCode, 0);
-assert.equal(checkBlueprint(real, { strict: true }).exitCode, 1);
+const realProgress = checkBlueprint(real);
+const realStrict = checkBlueprint(real, { strict: true });
+assert.deepEqual(realProgress.errors, []);
+assert.equal(realProgress.exitCode, 0);
+assert.deepEqual(realStrict.errors, []);
+assert.equal(realStrict.exitCode, realProgress.gaps.length ? 1 : 0);
+const seeds = copy(real);
+seeds.questions = ['q001', 'q002', 'q003'].map((id) => {
+  const matches = seeds.questions.filter((q) => q.id === id);
+  assert.equal(matches.length, 1, `种子题 ${id} 必须存在且唯一`);
+  return matches[0];
+});
+seeds.english.questions = Object.fromEntries(seeds.questions.map((q) => [q.id, real.english.questions[q.id]]));
+assert.equal(seeds.questions.length, 3);
+assert.equal(checkBlueprint(seeds).exitCode, 0);
+assert.equal(checkBlueprint(seeds, { strict: true }).exitCode, 1);
 // Fill every official objective and all quota dimensions to prove strict can pass.
 const complete = copy(real); complete.questions = []; complete.english.questions = {};
 for (const d of complete.notes.filter((d) => Object.hasOwn(TARGETS.domains, d.id))) {
@@ -130,7 +143,7 @@ assert.equal((generated.match(/^\| \d+\.\d+ \|/gm) || []).length, 38);
 assert(!generated.includes('| R.1 |'));
 assert.equal(generated, renderCoverage(real, '2026-01-01T00:00:00.000Z'));
 assert.equal(generated.replace(/^生成时间：.*$/m, ''), renderCoverage(real, '2026-01-02T00:00:00.000Z').replace(/^生成时间：.*$/m, ''));
-console.log(`✓ 蓝图：${cases} 类硬错误；进度/终检、190 题达标、真实种子题及 38 行覆盖图均通过`);
+console.log(`✓ 蓝图：${cases} 类硬错误；进度/终检、190 题达标、真实题库、三道种子 fixture 及 38 行覆盖图均通过`);
 
 // Unchanged coverage must preserve both bytes and modification time.
 const fs = require('node:fs'), os = require('node:os'), path = require('node:path');
