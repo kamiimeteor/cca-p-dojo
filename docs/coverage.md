@@ -1,6 +1,6 @@
 # 蓝图覆盖图
 
-生成时间：2026-09-29T07:28:06.899Z
+生成时间：2026-09-29T09:40:52.148Z
 
 由 scripts/gen-coverage.js 生成，勿手改。
 
@@ -42,12 +42,12 @@
 
 | Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
 | --- | --- | --- | --- | --- | --- |
-| 4.1 | 定义评估指标 | Define evaluation metrics (accuracy, latency, cost, safety, security) | ✓ | — | 0 |
-| 4.2 | 评估数据集与混合方法测试框架 | Design evaluation datasets and test frameworks using mixed methodologies | ✓ | — | 0 |
-| 4.3 | A/B 测试与迭代改进 | Conduct A/B testing and iterative improvements | ✓ | — | 0 |
-| 4.4 | 诊断系统问题：提示失效、幻觉、模型不匹配 | Diagnose system issues (prompt failure, hallucinations, model mismatch) | ✓ | q003 | 1 |
-| 4.5 | 优化 token、延迟与性价比 | Optimize token usage, latency, and cost-performance trade-offs | ✓ | — | 0 |
-| 4.6 | 日志与可观测性监控 | Monitor system performance using logging and observability tools | ✓ | — | 0 |
+| 4.1 | 定义评估指标 | Define evaluation metrics (accuracy, latency, cost, safety, security) | ✓ | q071, q072, q073, q074, q075 | 5 |
+| 4.2 | 评估数据集与混合方法测试框架 | Design evaluation datasets and test frameworks using mixed methodologies | ✓ | q076, q077, q078, q079, q080 | 5 |
+| 4.3 | A/B 测试与迭代改进 | Conduct A/B testing and iterative improvements | ✓ | q081, q082, q083, q084, q085 | 5 |
+| 4.4 | 诊断系统问题：提示失效、幻觉、模型不匹配 | Diagnose system issues (prompt failure, hallucinations, model mismatch) | ✓ | q003, q086, q087, q088, q089 | 5 |
+| 4.5 | 优化 token、延迟与性价比 | Optimize token usage, latency, and cost-performance trade-offs | ✓ | q090, q091, q092, q093, q094 | 5 |
+| 4.6 | 日志与可观测性监控 | Monitor system performance using logging and observability tools | ✓ | q095, q096, q097, q098, q099 | 5 |
 
 ## d5 治理、安全与风险管理 / Governance, Safety & Risk Management
 
