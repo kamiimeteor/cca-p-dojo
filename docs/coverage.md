@@ -1,6 +1,6 @@
 # 蓝图覆盖图
 
-生成时间：2026-09-29T14:42:53.641Z
+生成时间：2026-09-29T14:43:21.010Z
 
 由 scripts/gen-coverage.js 生成，勿手改。
 
@@ -19,11 +19,11 @@
 
 | Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
 | --- | --- | --- | --- | --- | --- |
-| 2.1 | 按取舍选择 Claude 模型 | Select appropriate Claude models based on trade-offs | 待写 | — | 0 |
-| 2.2 | System prompt、模板与护栏 | Design system prompts, templates, and guardrails | 待写 | — | 0 |
-| 2.3 | 提示技术：zero-shot / few-shot / CoT | Apply prompt engineering techniques (zero-shot, few-shot, chain-of-thought) | 待写 | — | 0 |
-| 2.4 | 上下文窗口与 token 管理 | Optimize context windows and manage token usage | 待写 | — | 0 |
-| 2.5 | 提示复用：缓存、模块化提示、Skills | Implement prompt reuse strategies (caching, modular prompts, Skills) | 待写 | q002 | 1 |
+| 2.1 | 按取舍选择 Claude 模型 | Select appropriate Claude models based on trade-offs | ✓ | q154, q155, q156, q157, q158 | 5 |
+| 2.2 | System prompt、模板与护栏 | Design system prompts, templates, and guardrails | ✓ | q159, q160, q161, q162, q163 | 5 |
+| 2.3 | 提示技术：zero-shot / few-shot / CoT | Apply prompt engineering techniques (zero-shot, few-shot, chain-of-thought) | ✓ | q164, q165, q166, q167, q168 | 5 |
+| 2.4 | 上下文窗口与 token 管理 | Optimize context windows and manage token usage | ✓ | q169, q170, q171, q172, q173 | 5 |
+| 2.5 | 提示复用：缓存、模块化提示、Skills | Implement prompt reuse strategies (caching, modular prompts, Skills) | ✓ | q002, q174, q175, q176, q177 | 5 |
 
 ## d3 集成 / Integration
 

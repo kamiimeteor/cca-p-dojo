@@ -543,7 +543,88 @@ const CONTENT_EN = {
       "title": "Select appropriate Claude models based on trade-offs",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "Exam focus",
+          "v": "Choose a model against task quality, response time, and cost per successful task; evaluate effort and model changes together."
+        },
+        {
+          "head": [
+            "Current comparison Sources: Models overview, Pricing, Choosing the right model (official pages, 2026-09-29)",
+            "Workload / relative latency",
+            "Standard input / output (USD per million tokens)",
+            "Context"
+          ],
+          "rows": [
+            [
+              "Fable 5.1",
+              "Demanding reasoning and extended agent work; slower",
+              "$10 / $50",
+              "1M tokens"
+            ],
+            [
+              "Opus 5.5",
+              "Sustained coding and knowledge work; moderate",
+              "$4 / $20",
+              "1M tokens"
+            ],
+            [
+              "Sonnet 5.5",
+              "Everyday coding, agents, and enterprise work; fast",
+              "$2 / $10",
+              "1M tokens"
+            ],
+            [
+              "Haiku 4.5",
+              "High volume with low latency; fastest",
+              "$1 / $5",
+              "200K tokens"
+            ]
+          ]
+        },
+        {
+          "v": "Most workloads start with Claude Opus 5.5. The official paths are efficiency first and capability first. For efficiency, implement on a fast, inexpensive model, test thoroughly, check quality, and upgrade for specific gaps. For capability, implement with Opus 5.5, refine prompts, evaluate, then consider lower effort or a cheaper model; consider Fable 5.1 if effort at `xhigh` or `max` still misses demanding reasoning or extended agent tasks. The first path fits prototyping, tight latency, limited budgets, and high volumes of simple work. The second fits difficult reasoning, science or mathematics, nuanced understanding, accuracy over cost, and advanced coding or highly autonomous work. Sources: Choosing the right model (official pages, 2026-09-29)"
+        },
+        {
+          "v": "The official guide calls a good evaluation set the most important step in deciding whether to upgrade or change models. Use actual prompts and data to compare correctness, answer quality, and edge cases before weighing cost. Where supported, tuning `output_config.effort` is often more useful than changing models (see 1.6 and 3.3). Fable 5.1, Opus 5.5, and Sonnet 5.5 support `low / medium / high / xhigh / max`, defaulting to `high / medium / high` respectively; Haiku 4.5 has no effort control. Effort guides behavior rather than fixing a token budget. Sources: Choosing the right model, Effort, Models overview (official pages, 2026-09-29)"
+        },
+        {
+          "title": "Decision rules (rules of thumb)",
+          "v": [
+            "If routine work passes → test lower effort or a cheaper tier, because savings can be measured.",
+            "If a complex task has no passing baseline → start with capability, because it helps establish feasibility and locate gaps.",
+            "If a model or configuration changes → rerun the same task set, because general rankings do not predict your workload."
+          ]
+        },
+        {
+          "title": "Common traps (rules of thumb)",
+          "v": [
+            "Equating the lowest token rate with the lowest total cost misses retries and review.",
+            "Treating relative latency as an SLA skips workload measurement.",
+            "Applying this table to every platform or billing mode ignores its scope: standard API token rates."
+          ]
+        },
+        {
+          "head": [
+            "Question cue (rules of thumb)",
+            "Answer direction"
+          ],
+          "rows": [
+            [
+              "Simple tasks at high volume on a small budget",
+              "Start with efficiency"
+            ],
+            [
+              "Hard tasks with quality to establish first",
+              "Start with capability"
+            ],
+            [
+              "Current model passes but takes too long",
+              "Evaluate effort"
+            ],
+            [
+              "Strong public benchmark, weak business results",
+              "Test actual prompts and edge cases"
+            ]
+          ]
         }
       ]
     },
@@ -551,7 +632,82 @@ const CONTENT_EN = {
       "title": "Design system prompts, templates, and guardrails",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "Exam focus",
+          "v": "Specify role, task, data boundaries, and output expectations; enforce access and validation in application code."
+        },
+        {
+          "head": [
+            "Prompt component",
+            "Purpose and limits"
+          ],
+          "rows": [
+            [
+              "System role",
+              "Set responsibilities, domain, and tone to focus behavior; spell out the task goal and success conditions."
+            ],
+            [
+              "Instructions and XML",
+              "State ordered steps when sequence matters. Use consistent, descriptive tags for instructions, background, examples, and input; nest natural hierarchies."
+            ],
+            [
+              "Output contract",
+              "Specify fields, types, length, and handling of unknown values; prose alone does not guarantee schema compliance."
+            ],
+            [
+              "Template variables (rule of thumb)",
+              "Separate stable rules from slots such as `{{case_text}}`; substitute them in application code and identify external content as data."
+            ]
+          ]
+        },
+        {
+          "v": "system: Triage tickets using only the supplied content.\nuser:\n<case_text>{{case_text}}</case_text>\n<instructions>Return category and evidence; use unknown for category when evidence is insufficient.</instructions>"
+        },
+        {
+          "v": "The example illustrates an application template, not a sendable API request. The prompting guide supports its role and structure choices. Evaluate structured outputs when a consumer depends on a schema; refusals, truncated output, and string enum / const casing have exceptions (see 1.2). Validate business meaning separately. Sources: Prompting best practices, Structured outputs (official pages, 2026-09-29)"
+        },
+        {
+          "v": "Guardrail instructions can state scope, refusal conditions, and how to treat external text, but XML tags do not grant or revoke access. Enforce authorization, tenant separation, and action checks at execution time; see 3.2, the safety topic in 5.1, and “Prompt as enforcement” in R.1. Sources: How we contain Claude, Effective context engineering for AI agents (official pages, 2026-09-29)"
+        },
+        {
+          "title": "Decision rules (rules of thumb)",
+          "v": [
+            "If role or tone drifts → specify responsibilities, because a generic expert label leaves the job unclear.",
+            "If examples blend into input → separate them with tags, because their sources and purposes differ.",
+            "If one workflow accepts changing data → use template slots, because stable rules are easier to retest.",
+            "If access violations must be blocked → enforce authorization at execution time, because model text cannot establish access boundaries."
+          ]
+        },
+        {
+          "title": "Common traps (rules of thumb)",
+          "v": [
+            "Giving access because the role says administrator confuses responsibility with authorization.",
+            "Inserting untrusted values into trusted instructions can introduce injection.",
+            "Parseable JSON can still contain incorrect business data."
+          ]
+        },
+        {
+          "head": [
+            "Question cue (rules of thumb)",
+            "Answer direction"
+          ],
+          "rows": [
+            [
+              "Role or tone keeps changing",
+              "Clarify the system role"
+            ],
+            [
+              "An example is treated as current input",
+              "Separate it with tags"
+            ],
+            [
+              "Many tickets follow the same process",
+              "Use a template with variable slots"
+            ],
+            [
+              "A prompt merely forbids tenant crossing",
+              "Enforce checks in code"
+            ]
+          ]
         }
       ]
     },
@@ -559,7 +715,95 @@ const CONTENT_EN = {
       "title": "Apply prompt engineering techniques (zero-shot, few-shot, chain-of-thought)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "Exam focus",
+          "v": "Clarify the task, then choose examples or reasoning controls for the observed failure; see 1.3 for workflows spanning multiple calls."
+        },
+        {
+          "head": [
+            "Technique",
+            "When to try it (rules of thumb)"
+          ],
+          "rows": [
+            [
+              "Zero-shot",
+              "Describe the task without demonstrations; establish a baseline when rules are clear."
+            ],
+            [
+              "Few-shot",
+              "Demonstrate inputs and desired outputs; evaluate it when formatting, category boundaries, or style vary."
+            ],
+            [
+              "CoT",
+              "Ask for stepwise problem solving; it can be a fallback with thinking off, but does not enable API thinking."
+            ]
+          ]
+        },
+        {
+          "v": "Official guidance covers relevance, diversity including edge cases, and structure. Use `<example>` and `<examples>` to distinguish demonstrations from instructions; 3–5 examples is a recommendation, not a threshold. Rule of thumb: include routine and easily confused inputs so incidental formatting or one label does not dominate. Sources: Prompting best practices (official pages, 2026-09-29)"
+        },
+        {
+          "head": [
+            "Current thinking behavior Sources: Thinking (official pages, 2026-09-29)",
+            "Configuration limits"
+          ],
+          "rows": [
+            [
+              "Fable 5.1 / Opus 5.5",
+              "Adaptive thinking stays on; the model allocates reasoning. See 2.1 for effort trade-offs."
+            ],
+            [
+              "Sonnet 5.5",
+              "Defaults to adaptive; `disabled` returns 400. `between_tools` accepts only `low / medium / high`, suppresses up-front reasoning, and can still return progress updates between tools; no other thinking fields are accepted in this mode."
+            ],
+            [
+              "Haiku 4.5",
+              "Off by default; supports manual extended thinking through `type: enabled` and `budget_tokens`."
+            ]
+          ]
+        },
+        {
+          "v": "With thinking active, official guidance favors broad reasoning directions, which often work better than prescribing every step; examples still apply. The first three models in the table omit thinking text by default; `display: summarized` exposes a summary, not the full internal reasoning. Recheck configuration when migrating; 3.3 records an earlier date. Prompt chaining passes artifacts between calls and can use programmatic gates. CoT within one call does not create that workflow; see 1.3. Sources: Prompting best practices, Thinking, Building effective agents (official pages, 2026-09-29)"
+        },
+        {
+          "title": "Decision rules (rules of thumb)",
+          "v": [
+            "If rules are clear but no baseline exists → test zero-shot first, because it makes gaps easier to identify.",
+            "If category boundaries vary → add relevant, varied demonstrations, because examples can express implicit rules.",
+            "If difficult reasoning fails → check thinking and effort before testing, because they are distinct controls.",
+            "If steps are fixed and intermediate artifacts are testable → evaluate chaining, because gates help locate failures."
+          ]
+        },
+        {
+          "title": "Common traps (rules of thumb)",
+          "v": [
+            "Examples from only one category can teach an unintended bias.",
+            "Long reasoning is not evidence of correctness; evaluate the answer.",
+            "Calling a stepwise prompt a multi-agent system confuses reasoning with orchestration."
+          ]
+        },
+        {
+          "head": [
+            "Question cue (rules of thumb)",
+            "Answer direction"
+          ],
+          "rows": [
+            [
+              "Explicit rules, no demonstrations",
+              "Zero-shot baseline"
+            ],
+            [
+              "Output pattern is hard to describe",
+              "Few-shot"
+            ],
+            [
+              "Thinking configuration returns 400",
+              "Check model compatibility"
+            ],
+            [
+              "Intermediate artifacts pass code checks",
+              "Prompt chaining; see 1.3"
+            ]
+          ]
         }
       ]
     },
@@ -567,7 +811,102 @@ const CONTENT_EN = {
       "title": "Optimize context windows and manage token usage",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "Exam focus",
+          "v": "Count for the target model, reserve output space, and manage growth while retaining relevant evidence and task state."
+        },
+        {
+          "head": [
+            "Window and counting Sources: Context windows, Token counting, Models overview (official pages, 2026-09-29)",
+            "Meaning and limits"
+          ],
+          "rows": [
+            [
+              "Capacity",
+              "See 2.1 for model limits. History and new output share the window; system text, tool definitions, messages, tool results, images, and documents occupy it."
+            ],
+            [
+              "Output budget",
+              "Current-turn thinking also uses the output budget. The first three models in 2.1 allow 128K output tokens per ordinary request; the last allows 64K. Context capacity is not an output allowance."
+            ],
+            [
+              "Counting",
+              "`messages.count_tokens` estimates input; actual usage can differ slightly. Recount for the target model rather than converting character counts mechanically."
+            ],
+            [
+              "Counting limits",
+              "Client tools and the advisor tool are supported. Other server tools, the MCP connector, and URL/file image or document sources are not accepted. Images and PDFs can use base64; inspect actual usage for requests with unsupported inputs."
+            ]
+          ]
+        },
+        {
+          "v": "For long inputs (20k+ tokens), place documents near the top, before the query, instructions, and examples. Label document content and sources with XML and extract relevant evidence before answering. The guide reports up to 30% better response quality in tests with the query last, especially for complex inputs spanning several documents; it supplies no experiment year or full design, so this is not a general performance guarantee. Sources: Prompting best practices (official pages, 2026-09-29)"
+        },
+        {
+          "head": [
+            "Context management Sources: Effective context engineering for AI agents, Compaction, Context editing (official pages, 2026-09-29)",
+            "Mechanism and limits"
+          ],
+          "rows": [
+            [
+              "Trimming (rule of thumb)",
+              "Remove duplicates, stale material, or irrelevant content; retain decisions, open work, constraints, and evidence locations."
+            ],
+            [
+              "Compaction",
+              "A server-written summary replaces older history. On-demand and threshold modes are currently beta with separate compatibility rules; official guidance prefers on-demand where available."
+            ],
+            [
+              "Context editing",
+              "Clear selected tool results or thinking on the server while the client retains full history. Beta header: `context-management-2025-06-27`."
+            ],
+            [
+              "Client SDK summaries",
+              "The context editing page also offers client compaction as an alternative; server compaction is generally preferred. Summarizing and clearing are not lossless archiving."
+            ]
+          ]
+        },
+        {
+          "v": "Cached input still occupies the window; clearing content can invalidate the affected cache (see 4.5). Rewriting earlier messages can invalidate retained thinking, so follow the model's preservation rules. Section 3.8 covers what to load and when; this section manages content already in context. Rule of thumb: verify that task conditions survive compression. Sources: Context windows, Context editing (official pages, 2026-09-29)"
+        },
+        {
+          "title": "Decision rules (rules of thumb)",
+          "v": [
+            "If a request approaches capacity → count input and reserve output room, because both share the window.",
+            "If old tool results dominate → evaluate targeted clearing, because it is more selective than deleting whole task histories.",
+            "If a long conversation needs to continue → evaluate compaction, because a larger window alone does not remove noise."
+          ]
+        },
+        {
+          "title": "Common traps (rules of thumb)",
+          "v": [
+            "Assuming cache hits do not count toward the context window confuses billing with capacity.",
+            "Losing exceptions in a summary removes needed evidence.",
+            "Editing old messages and replaying thinking unchanged can fail preservation checks."
+          ]
+        },
+        {
+          "head": [
+            "Question cue (rules of thumb)",
+            "Answer direction"
+          ],
+          "rows": [
+            [
+              "Check length before sending",
+              "Count tokens for the target model"
+            ],
+            [
+              "A query is buried in lengthy documents",
+              "Put documents first and the query last"
+            ],
+            [
+              "Historical tool results are obsolete",
+              "Context editing"
+            ],
+            [
+              "Conversation history approaches capacity",
+              "Compaction with state checks"
+            ]
+          ]
         }
       ]
     },
@@ -575,7 +914,118 @@ const CONTENT_EN = {
       "title": "Implement prompt reuse strategies (caching, modular prompts, Skills)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "Exam focus",
+          "v": "Cache stable input, share instruction modules, and load task procedures through Skills; these approaches can work together."
+        },
+        {
+          "head": [
+            "Caching Sources: Prompt caching (official pages, 2026-09-29)",
+            "Behavior and conditions"
+          ],
+          "rows": [
+            [
+              "Prefix",
+              "Cache through the marked block, following `tools → system → messages`. Hits depend on an identical prefix; the cache reuses input processing, not a saved answer."
+            ],
+            [
+              "Breakpoints",
+              "Top-level `cache_control` tracks the last cacheable block; block-level markers can stay at the end of stable content. There are at most 4 breakpoints in total. Keep a changing suffix after the stable prefix."
+            ],
+            [
+              "TTL",
+              "Default: 5 minutes; `ttl: 1h`: 1 hour. A hit refreshes the entry without an extra refresh charge. Time starts when the read/write request starts, not when its response ends. Put longer TTLs before shorter ones when mixing them."
+            ],
+            [
+              "Billing",
+              "Writes cost 1.25× base input for 5 minutes or 2× for 1 hour. Reads usually cost 0.1×; the table includes exceptions. Uncached input and output are billed separately; see 4.5 and 4.6."
+            ]
+          ]
+        },
+        {
+          "head": [
+            "Standard Claude API (USD per million tokens) Sources: Prompt caching, Pricing (official pages, 2026-09-29)",
+            "5-minute write",
+            "1-hour write",
+            "Read / refresh",
+            "Minimum cache tokens"
+          ],
+          "rows": [
+            [
+              "Fable 5.1",
+              "$12.50",
+              "$20",
+              "$0.25 (0.025×)",
+              "512"
+            ],
+            [
+              "Opus 5.5",
+              "$5",
+              "$8",
+              "$0.20 (0.05×)",
+              "512"
+            ],
+            [
+              "Sonnet 5.5",
+              "$2.50",
+              "$4",
+              "$0.20 (0.1×)",
+              "512"
+            ],
+            [
+              "Haiku 4.5",
+              "$1.25",
+              "$2",
+              "$0.10 (0.1×)",
+              "4,096"
+            ]
+          ]
+        },
+        {
+          "v": "Modularity and versioning (rules of thumb): maintain roles, task rules, examples, and output contracts separately, then assemble them in a fixed order. Record module versions, model settings, and evaluation results; retest changes and retain a rollback version. Reusing a template does not enable caching by itself. Put stable modules before variables. Sources: Effective context engineering for AI agents, Prompt caching (official pages, 2026-09-29)"
+        },
+        {
+          "v": "A Skill is a directory: YAML frontmatter in `SKILL.md` supplies `name / description`, its body provides procedures, and optional files supply scripts, templates, or references. Metadata loads first, instructions when triggered, and resources as needed. When a script runs, only its output enters context; the script code itself does not. See 3.8 for discovery and loading trade-offs. Caching does not reduce window occupancy, and Skills do not grant execution permissions. Sources: Agent Skills overview, Context windows, How we contain Claude (official pages, 2026-09-29)"
+        },
+        {
+          "title": "Decision rules (rules of thumb)",
+          "v": [
+            "If full policies repeat and only the question changes → stabilize the prefix and enable caching, because the complete text can remain available with less repeated processing.",
+            "If reuse often occurs after the default TTL → evaluate a longer TTL, because a higher write rate may avoid repeated creation.",
+            "If several tasks share rules → version separate modules, because changes become traceable.",
+            "If different tasks have lengthy manuals → load them through Skills, because unrelated instructions can stay out of context."
+          ]
+        },
+        {
+          "title": "Common traps (rules of thumb)",
+          "v": [
+            "Marking a short prompt does not bypass the model minimum; it runs uncached without an error.",
+            "A breakpoint after a changing timestamp cannot recover a stable entry that no earlier request wrote.",
+            "Treating a prompt cache as permanent memory or an answer store ignores expiry and prefix matching."
+          ]
+        },
+        {
+          "head": [
+            "Question cue (rules of thumb)",
+            "Answer direction"
+          ],
+          "rows": [
+            [
+              "Keep complete policies across repeated requests",
+              "Stable prefix plus caching"
+            ],
+            [
+              "Template changes are hard to trace",
+              "Module versions and regression checks"
+            ],
+            [
+              "Many Skills, few relevant to each task",
+              "Progressive loading"
+            ],
+            [
+              "High cache writes with no reads",
+              "Check prefix, breakpoint, TTL, and minimum length"
+            ]
+          ]
         }
       ]
     },

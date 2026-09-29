@@ -16,14 +16,20 @@ Object.assign(CONTENT_EN.questions, {
     }
   },
   q002: {
-    q: 'A finance advisory bot includes roughly 8k tokens of fixed instructions and compliance text in each call. The customer query varies, but this reference material stays identical. Which two changes reduce repeated-input costs without omitting any rules? Select 2 options.',
-    o: ["Cut the compliance text down to its first few sections", "Move the unchanging instructions and policy text ahead of the per-request input", "Adopt a minimum-size model without evaluating its suitability", "Enable prompt caching to reuse the repeated static prefix", "Move the full policy into few-shot examples and continue sending it with every request"],
-    e: 'Putting static content first creates a consistent prefix across requests. Prompt caching can reuse that prefix, reducing repeated input processing costs while retaining the full policy.',
-    w: {
-      0: "Truncating the policy removes constraints and violates the requirement to preserve it. It also fails to reuse repeated content.",
-      2: "Selecting a minimum-size model without evaluation may reduce answer quality and does not eliminate repeated processing of static content.",
-      4: "Reformatting policies as examples still sends the same content repeatedly. Changing its presentation alone does not enable caching.",
-    },
+    "q": "A financial assistant repeatedly reads the same long system instructions and policy documents while user questions change. The team must retain the complete policies and reduce repeated input-processing costs; the model supports caching a prefix of this length. Which measures fit? Select 2.",
+    "o": [
+      "Split policies by topic and load the matching modules for each inquiry",
+      "Place system instructions and complete policies first, with the changing user question at the end",
+      "Move requests to a model with a lower token price and retain the current policy submission structure",
+      "Enable prompt caching on the stable prefix so its input processing is reused",
+      "Arrange the complete policies as example conversations and send them through the existing request flow"
+    ],
+    "e": "A stable leading segment creates an identical cacheable prefix. Enabling caching reuses its input processing while retaining the complete policies. See notes 2.5.",
+    "w": {
+      "0": "[Compliance shortcut] Selecting modules by topic leaves other policy text out of the request, contrary to the full-policy requirement.",
+      "2": "[Model substitution] The cheaper model lacks task-quality and total-cost evaluation support and does not address repeated-prefix processing.",
+      "4": "[Wrong-layer diagnosis] Example conversations change presentation, but the existing flow still processes the same input without enabling caching."
+    }
   },
   "q003": {
     "q": "After a healthcare team reloads its knowledge base, the retrieval-assisted bot begins making factual errors while expressing high certainty. The team has kept the model release fixed, and measured response times are steady. Where should troubleshooting begin?",

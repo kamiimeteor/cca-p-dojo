@@ -50,6 +50,43 @@ D1 的设计表、决策规则与题目信号是原创教学归纳；其中标�
 - [https://platform.claude.com/docs/en/build-with-claude/effort](https://platform.claude.com/docs/en/build-with-claude/effort)：核实支持该参数的模型可在模型内权衡能力、延迟和 token 成本，并应按任务评估；“往往比换模型更好”的直接出处是上方选型页，不冒充本页原句。
 - [https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实业务结果、延迟、token、成本及错误率应通过评估和生产反馈验证；不以 HTTP 成功或模型自述替代任务验收。
 
+## D2 核对口径
+
+D2 写作与查阅日期：2026-09-29。下列 URL 均在当日实际查阅；每条注明核实范围。模型、价格、窗口与 thinking/effort 的来源和日期也附在笔记对应段落或表头，表头出处适用于其每一行。当前主表使用 Sonnet 5.5；其他域较早日期的 Sonnet 5 记录是不同型号，不作为新型号的配置依据。5.1 尚待写，本次仅添加专题导航。
+
+## 2.1
+
+- [models](https://platform.claude.com/docs/en/about-claude/models/overview)（查阅：2026-09-29）、[pricing](https://platform.claude.com/docs/en/about-claude/pricing)（查阅：2026-09-29）：核实当前主比较表四型号的定位、相对延迟、标准 API 输入／输出单价及窗口；金额为 USD / 百万 token，未外推到云平台、快速模式或总账单。
+- [choose](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model)（查阅：2026-09-29）：核实效率优先与能力优先的完整步骤（效率优化为可选）、两类适用情形、大多数工作负载从 Claude Opus 5.5 开始、好的评估集是判断是否升级或更换模型时最重要的一步、实际提示与数据评估，以及调 effort 往往比换模型更合适；该页也是 2.1 对比表定位的来源。
+- [effort](https://platform.claude.com/docs/en/build-with-claude/effort)（查阅：2026-09-29）：核实五级 effort、三个支持型号的默认值及软指导性质；不把 max 解释为超越 max_tokens 硬上限。
+
+## 2.2
+
+- [prompt](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)（查阅：2026-09-29）：核实 system 角色、明确任务与输出格式、一致且有意义的 XML 标签及自然嵌套。旧 prompt-templates-and-variables 入口本次重定向到此页；变量替换与版本方案明标应用侧经验法则，示例为原创。
+- [structured](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)（查阅：2026-09-29）：核实 schema 约束与自然语言格式指令的区别；完整保留拒绝、max_tokens 截断、字符串 enum / const 大小写三类例外，参见 1.2。
+- [contain](https://www.anthropic.com/engineering/how-we-contain-claude)（查阅：2026-09-29）、[engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)（查阅：2026-09-29）：核实模型行为引导与执行环境权限的区别、提示结构与内容分区；XML 及角色不构成授权。3.2 和 R.1 已复核，5.1 仅作安全专题导航，目前仍待写。
+
+## 2.3
+
+- [prompt](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)（查阅：2026-09-29）：核实 few-shot 的相关、多样（含边界）、结构化三项建议，3–5 示例为建议；thinking 下偏好一般推理指引的 often（往往）语气、示例可配合 thinking、手动 CoT 的关闭 thinking 前提。技术适用表为经验法则。
+- [thinking](https://platform.claude.com/docs/en/build-with-claude/thinking)（查阅：2026-09-29）、[models](https://platform.claude.com/docs/en/about-claude/models/overview)（查阅：2026-09-29）：核实 Fable 5.1 / Opus 5.5 常开、Sonnet 5.5 的 between_tools 与 low/medium/high 条件、不接受其他 thinking 字段、disabled 返回 400、Haiku 4.5 手动 extended thinking；核实默认隐藏与摘要展示。3.3 的旧日期 Sonnet 5 记录不能套到新型号。
+- [agents](https://www.anthropic.com/engineering/building-effective-agents)（查阅：2026-09-29）：核实 prompt chaining 跨调用传递结果、可加程序检查门、固定可分解任务与延迟取舍；架构展开参见 1.3。
+
+## 2.4
+
+- [context](https://platform.claude.com/docs/en/build-with-claude/context-windows)（查阅：2026-09-29）、[models](https://platform.claude.com/docs/en/about-claude/models/overview)（查阅：2026-09-29）：核实窗口含历史与输出、请求各类输入及本轮 thinking 的占用、缓存仍占窗口；2.1 四型号窗口与普通请求最大输出 128K / 64K 分开叙述。
+- [count](https://platform.claude.com/docs/en/build-with-claude/token-counting)（查阅：2026-09-29）：核实 count_tokens 是输入估计；支持 client tools 与 advisor，其他 server tools、MCP connector、URL/file 图像或文档源不接受，base64 图像／PDF 可计数；实际请求 usage 用于核对。
+- [prompt](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)（查阅：2026-09-29）：核实 20k+ 长输入中文档置于问题、指令、示例之前，多文档 XML 来源标记及先取引文。末尾查询的 up to 30% 为该页报告的测试上限，页面未给实验年份及完整设计，未当 SLA。
+- [compact](https://platform.claude.com/docs/en/build-with-claude/compaction)（查阅：2026-09-29）、[editing](https://platform.claude.com/docs/en/build-with-claude/context-editing)（查阅：2026-09-29）：核实按需与阈值 compaction 均为 beta、可用时优先按需；context editing 的工具结果清除、thinking 清除、客户端 SDK compaction 三类内容，以及 beta header、完整客户端历史、缓存失效与 thinking 前缀校验风险。
+- [engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)（查阅：2026-09-29）：核实压缩可能丢失细节，保存决策与未解决工作；具体裁剪清单与核验步骤标为经验法则。与 3.8 的按需加载边界已区分。
+
+## 2.5
+
+- [cache](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)（查阅：2026-09-29）、[pricing](https://platform.claude.com/docs/en/about-claude/pricing)（查阅：2026-09-29）：核实前缀顺序、完全一致条件、自动／显式断点、最多四断点、TTL 从请求开始计时、命中刷新、混合 TTL 顺序、1.25×/2× 写入倍数与读取例外。逐型号核对标准 API 缓存价及最低长度：前三型 512、Haiku 4.5 为 4,096；未外推 Bedrock。
+- [cache](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)（查阅：2026-09-29）：核实低于最低长度不缓存且不报错、回溯只能找到此前实际写入的断点、未缓存输入与输出另计；q002 的静态前缀加缓存两项答案仍成立。
+- [skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)（查阅：2026-09-29）：核实 SKILL.md frontmatter 的 name/description、正文与可选资源、元数据／正文／资源三级渐进加载，以及执行脚本时仅输出进入上下文、代码本身不进入；发现细节参见 3.8。
+- [engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)（查阅：2026-09-29）、[context](https://platform.claude.com/docs/en/build-with-claude/context-windows)（查阅：2026-09-29）、[contain](https://www.anthropic.com/engineering/how-we-contain-claude)（查阅：2026-09-29）：支持模块内容分区、缓存不缩小窗口、Skills 不授予权限的边界。模块版本、确定组装顺序、回归及回退版本是本文经验法则；成本优化参见 4.5。
+
 ## 3.1
 
 - [https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool)：核实超过 30–50 个工具后选择准确率下降，以及 10+ 工具、定义超过 10,000 tokens 等建议使用条件。
