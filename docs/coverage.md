@@ -1,6 +1,6 @@
 # 蓝图覆盖图
 
-生成时间：2026-09-29T14:43:21.010Z
+生成时间：2026-09-29T15:47:46.891Z
 
 由 scripts/gen-coverage.js 生成，勿手改。
 
@@ -63,11 +63,11 @@
 
 | Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
 | --- | --- | --- | --- | --- | --- |
-| 6.1 | 结构化需求发现 | Conduct structured discovery and requirement gathering | 待写 | — | 0 |
-| 6.2 | 沟通架构决策与取舍 | Communicate architectural decisions and trade-offs | 待写 | — | 0 |
-| 6.3 | 反馈闭环与预期对齐（含 SLA） | Manage stakeholder feedback loops and expectation alignment (including SLAs) | 待写 | — | 0 |
-| 6.4 | 架构文档与实施指导 | Document architectures and provide implementation guidance | 待写 | — | 0 |
-| 6.5 | 支撑生命周期各阶段 | Support lifecycle phases (discovery, design, handoff, monitoring, iteration) | 待写 | — | 0 |
+| 6.1 | 结构化需求发现 | Conduct structured discovery and requirement gathering | ✓ | q127, q128, q129, q130, q131, q132 | 6 |
+| 6.2 | 沟通架构决策与取舍 | Communicate architectural decisions and trade-offs | ✓ | q133, q134, q135, q136, q137 | 5 |
+| 6.3 | 反馈闭环与预期对齐（含 SLA） | Manage stakeholder feedback loops and expectation alignment (including SLAs) | ✓ | q138, q139, q140, q141, q142, q143 | 6 |
+| 6.4 | 架构文档与实施指导 | Document architectures and provide implementation guidance | ✓ | q144, q145, q146, q147, q148 | 5 |
+| 6.5 | 支撑生命周期各阶段 | Support lifecycle phases (discovery, design, handoff, monitoring, iteration) | ✓ | q149, q150, q151, q152, q153 | 5 |
 
 ## d7 开发者生产力与运维赋能 / Developer Productivity & Operational Enablement
 

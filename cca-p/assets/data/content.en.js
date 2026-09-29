@@ -2709,7 +2709,79 @@ const CONTENT_EN = {
       "title": "Conduct structured discovery and requirement gathering",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Establish the business problem and acceptance criteria before deciding whether to use an LLM. See 1.1 for selection boundaries.",
+          "title": "What this objective tests (heuristics)"
+        },
+        {
+          "head": [
+            "Discovery question (heuristics)",
+            "What to record"
+          ],
+          "rows": [
+            [
+              "Goals and users",
+              "Who struggles with which step? Who handles it today, and what are the time, error, and rework costs? Who accepts the result?"
+            ],
+            [
+              "Data and current process",
+              "Where do inputs come from, who can access them, and how often do they change? How do existing systems, approvals, and exception handling connect?"
+            ],
+            [
+              "Constraints and risks",
+              "What limits apply to compliance, retention, latency, and cost? Who could be harmed by an error, and who takes over?"
+            ],
+            [
+              "Success criteria",
+              "What counts as a completed task? Which samples, measurement window, and scoring rules govern acceptance? What will be compared with the current process?"
+            ]
+          ]
+        },
+        {
+          "v": "Official basis: Anthropic describes good success criteria as specific, measurable, achievable, and relevant to the application and its users. The Prompt engineering overview assumes success criteria, ways to test them empirically, and a draft prompt to improve; it advises establishing these first if they are missing. Sources: that overview and Define success criteria and build evaluations; URLs are in docs/sources.md 6.1."
+        },
+        {
+          "v": "Discovery deliverables (heuristics): a problem statement identifies the user, task, current situation, and intended outcome. Success criteria include a baseline, samples, and an acceptance owner. A constraint register separates firm limits from negotiable preferences. A risk register records impact, mitigations, owners, and open questions. Record untested targets as assumptions."
+        },
+        {
+          "v": [
+            "If fixed rules already solve the problem → retain ordinary code, because there is no evidence that generative processing adds value.",
+            "If the goal is only to improve efficiency → define a baseline and task metrics, because a slogan cannot establish acceptance.",
+            "If data access or compliance boundaries are unclear → establish the permitted scope first, because a successful demo does not establish production readiness.",
+            "If stakeholders disagree about success → agree on scoring criteria using representative cases, because the same metric name can conceal different definitions."
+          ],
+          "title": "Decision rules (heuristics)"
+        },
+        {
+          "v": [
+            "Asking only about model features misses process bottlenecks.",
+            "Treating management as the only user voice leaves out the people doing the work.",
+            "Presenting expected benefits as measured benefits omits the baseline and evidence."
+          ],
+          "title": "Common traps (heuristics)"
+        },
+        {
+          "head": [
+            "Question cue (heuristics)",
+            "Best direction"
+          ],
+          "rows": [
+            [
+              "Customer specifies an agent framework first",
+              "Return to the task and whether an LLM fits"
+            ],
+            [
+              "Goals are only better or faster",
+              "Define the baseline and acceptance method"
+            ],
+            [
+              "Data ownership is unclear",
+              "Complete the constraint and risk registers"
+            ],
+            [
+              "Users and approvers disagree",
+              "Use cases to establish tasks and responsibilities"
+            ]
+          ]
         }
       ]
     },
@@ -2717,7 +2789,96 @@ const CONTENT_EN = {
       "title": "Communicate architectural decisions and trade-offs",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Record architecture choices as traceable trade-offs supported by evidence, and explain the same decision in terms each audience can use.",
+          "title": "What this objective tests (heuristics)"
+        },
+        {
+          "head": [
+            "ADR content (heuristics)",
+            "What to record"
+          ],
+          "rows": [
+            [
+              "Context",
+              "The problem, business goals, constraints, and open decision."
+            ],
+            [
+              "Options",
+              "Candidate approaches, including the current approach, compared on the same tasks."
+            ],
+            [
+              "Decision",
+              "The choice and rationale, with evaluation results, date, status, and owner."
+            ],
+            [
+              "Consequences",
+              "Benefits, costs, residual risks, and conditions that would reopen the decision."
+            ]
+          ]
+        },
+        {
+          "head": [
+            "Audience (heuristics)",
+            "What to emphasize"
+          ],
+          "rows": [
+            [
+              "Executives",
+              "Business benefits, investment, risk, rollout limits, and decisions awaiting approval."
+            ],
+            [
+              "Engineering",
+              "Interfaces, dependencies, permissions, failure paths, implementation details, and acceptance methods."
+            ],
+            [
+              "Legal and compliance",
+              "Data sources, flows, retention, and access controls, with verifiable evidence and unresolved questions."
+            ]
+          ]
+        },
+        {
+          "v": "Evidence package (heuristics): record sample scope, scoring version, quality results, p95 completion latency, and cost per successful task, including retries and human review. Report variation and missed targets. See 1.6 and 4.1 for measurement details. Official basis: Anthropic's eval article describes tracking latency, tokens, cost per task, and error rates on a fixed task set. The source URL is in docs/sources.md 6.2."
+        },
+        {
+          "v": [
+            "If executives ask whether the investment is worthwhile → compare benefits and risks with the baseline, because component details do not directly answer the investment question.",
+            "If an option is faster but less accurate → check the agreed thresholds, because improving one metric does not establish overall acceptance.",
+            "If compliance reviewers question outbound data → show data flows and control evidence, because an architecture claim does not demonstrate processing boundaries.",
+            "If changed constraints invalidate an earlier decision → create a linked ADR that supersedes it, because preserving history explains the original trade-off."
+          ],
+          "title": "Decision rules (heuristics)"
+        },
+        {
+          "v": [
+            "Recording only the winning option hides why alternatives were rejected.",
+            "Using the price of one API call as total task cost omits retries and review.",
+            "Giving different audiences different commitments creates inconsistency; adapt the explanation while retaining the facts."
+          ],
+          "title": "Common traps (heuristics)"
+        },
+        {
+          "head": [
+            "Question cue (heuristics)",
+            "Best direction"
+          ],
+          "rows": [
+            [
+              "Why was this approach selected?",
+              "Consult the ADR options and evidence"
+            ],
+            [
+              "Board is considering expansion",
+              "Quantify benefits, costs, and risks"
+            ],
+            [
+              "Lower price but more rework",
+              "Compare cost per successful task"
+            ],
+            [
+              "Review of data crossing system boundaries",
+              "Provide data flows and control evidence"
+            ]
+          ]
         }
       ]
     },
@@ -2725,7 +2886,78 @@ const CONTENT_EN = {
       "title": "Manage stakeholder feedback loops and expectation alignment (including SLAs)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Define measurable service commitments and feed reviewed feedback into the next evaluation cycle.",
+          "title": "What this objective tests (heuristics)"
+        },
+        {
+          "head": [
+            "Term (Google SRE)",
+            "Meaning"
+          ],
+          "rows": [
+            [
+              "SLI: service level indicator",
+              "A carefully defined quantitative measure of a service characteristic."
+            ],
+            [
+              "SLO: service level objective",
+              "A target value or range measured through an SLI."
+            ],
+            [
+              "SLA: service level agreement",
+              "An agreement with users that includes consequences for meeting or missing SLOs; consequences are not necessarily financial."
+            ]
+          ]
+        },
+        {
+          "v": "Agreement design (heuristics): cover a quality floor, completion latency, and availability in an LLM application SLA. Define task scope, measurement window, denominator, sampling and grading, exceptions, and breach handling. Negotiate quality thresholds for the business; these are not universal Anthropic commitments. See 1.6 and 4.1 for SLI definitions."
+        },
+        {
+          "v": "Setting expectations: Anthropic's eval article notes variation across runs and describes automated evals, production monitoring, user feedback, A/B tests, manual trace review, and systematic human studies as complementary. Heuristics: show error rates and failure types from repeated trials, agree on human takeover conditions, and expand from a pilot gradually. URLs for the terminology and eval sources are in docs/sources.md 6.3."
+        },
+        {
+          "v": "Feedback process (heuristics): capture the case and version → remove sensitive details, verify expectations, and classify the issue → have an owner prioritize it → add a regression case with scoring criteria → test the fix against a baseline and report the result to the person who raised it. Retain representative cases so complaints do not become the entire test set. See 4.3 for experiments and release decisions."
+        },
+        {
+          "v": [
+            "If an agreement assesses breaches over a measurement window → use the agreed definitions, because one failure cannot replace results for the whole window.",
+            "If the service is online but answers are often wrong → add quality indicators and a floor, because availability does not measure task quality.",
+            "If users expect identical results every time → explain nondeterminism and agree on measurable targets, because a demo cannot establish zero errors.",
+            "If complaints cluster around one task type → review the cases and evaluate that segment, because an overall average can conceal local regressions."
+          ],
+          "title": "Decision rules (heuristics)"
+        },
+        {
+          "v": [
+            "Calling an internal target a compensation agreement confuses an SLO with an SLA.",
+            "Treating a user edit as a reference answer skips verification.",
+            "Treating a high offline score as a production guarantee ignores differences in inputs and operating conditions."
+          ],
+          "title": "Common traps (heuristics)"
+        },
+        {
+          "head": [
+            "Question cue (heuristics)",
+            "Best direction"
+          ],
+          "rows": [
+            [
+              "How is performance measured?",
+              "Define the SLI"
+            ],
+            [
+              "What level is the target?",
+              "Define the SLO"
+            ],
+            [
+              "What happens if targets are missed?",
+              "Check the SLA"
+            ],
+            [
+              "The same complaint keeps recurring",
+              "Review cases and add regression coverage"
+            ]
+          ]
         }
       ]
     },
@@ -2733,7 +2965,79 @@ const CONTENT_EN = {
       "title": "Document architectures and provide implementation guidance",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Deliver documentation that supports implementation, acceptance, and operations, tied to the version actually deployed.",
+          "title": "What this objective tests (heuristics)"
+        },
+        {
+          "head": [
+            "Documentation (heuristics)",
+            "Delivery details"
+          ],
+          "rows": [
+            [
+              "Architecture and data flows",
+              "Component responsibilities, interfaces, trust boundaries, data sources, storage, retention, and exception flows."
+            ],
+            [
+              "Prompts and versions",
+              "Templates, variables, model configuration, and dependency versions, linked to release records."
+            ],
+            [
+              "Tool inventory and permissions",
+              "Input and output contracts, execution identities, access scope, approval points, and failure handling. See 3.1 and 3.2."
+            ],
+            [
+              "Evaluation method and runbook",
+              "Datasets, scoring criteria, thresholds, and run instructions; monitoring, alerts, diagnosis, degraded operation, rollback, and owners."
+            ]
+          ]
+        },
+        {
+          "v": "Implementation guidance (heuristics): identify firm constraints, interface contracts, acceptance cases, and known risks for each task. Describe dependencies, failure exits, and ownership. Have the implementation team run normal, boundary, and failure cases, and resolve disagreements in the criteria first. Diagnose failures using 4.4 and R.1 instead of attributing every problem to the prompt."
+        },
+        {
+          "v": "Official basis: Anthropic's eval article describes a good task as one on which two domain experts independently agree whether it passes or fails. It suggests creating a reference solution for each task to demonstrate that the task can be solved and to check the graders' configuration. Ambiguous task specifications add noise to metrics, and vague rubrics produce inconsistent judgments. The documentation checklist is a heuristic, not an official delivery template. Source: Demystifying evals for AI agents; the URL is in docs/sources.md 6.4."
+        },
+        {
+          "v": [
+            "If implementers understand only the main flow → add exception paths and acceptance cases, because production also receives failing inputs.",
+            "If a prompt or tool contract changes → update versions and documentation and run regression checks, because old instructions may describe different behavior.",
+            "If the system performs high-risk writes → document execution permissions and approval points, because prompt restrictions cannot replace enforcement at execution.",
+            "If a known risk remains unresolved → record its impact, interim controls, and owner, because omitting it misleads the receiving team about system boundaries."
+          ],
+          "title": "Decision rules (heuristics)"
+        },
+        {
+          "v": [
+            "An architecture diagram without interfaces or acceptance criteria does not give implementers enough to deliver the system.",
+            "Putting secrets in the runbook exposes credentials; describe access procedures and permissions instead.",
+            "Copying full logs into examples skips review for sensitive data."
+          ],
+          "title": "Common traps (heuristics)"
+        },
+        {
+          "head": [
+            "Question cue (heuristics)",
+            "Best direction"
+          ],
+          "rows": [
+            [
+              "Team cannot reproduce an experiment",
+              "Provide versions, datasets, and run instructions"
+            ],
+            [
+              "No response plan for interface failures",
+              "Document exception paths and the runbook"
+            ],
+            [
+              "Delivery contains only a successful demo",
+              "Add boundary and failure acceptance cases"
+            ],
+            [
+              "Nobody handles alerts after handoff",
+              "Assign owners and an escalation path"
+            ]
+          ]
         }
       ]
     },
@@ -2741,7 +3045,86 @@ const CONTENT_EN = {
       "title": "Support lifecycle phases (discovery, design, handoff, monitoring, iteration)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Connect discovery, design, handoff, monitoring, and iteration through deliverables and gates, with an owner for each decision.",
+          "title": "What this objective tests (heuristics)"
+        },
+        {
+          "head": [
+            "Phase (heuristics)",
+            "Deliverable → gate for progressing"
+          ],
+          "rows": [
+            [
+              "Discovery",
+              "Problem, criteria, constraints, and risk register → business stakeholders confirm scope and the acceptance owner."
+            ],
+            [
+              "Design",
+              "Architecture, ADRs, prototype, and evaluation results → the approach meets agreed quality, cost, latency, and data boundaries."
+            ],
+            [
+              "Handoff",
+              "Versioned delivery package and runbook → the receiving team can run evaluations, handle alerts, and rehearse rollback."
+            ],
+            [
+              "Monitoring",
+              "Quality, availability, latency, cost, and incident records → owners distinguish ordinary variation from issues requiring action. See 3.4 and 4.6."
+            ],
+            [
+              "Iteration",
+              "Fix hypothesis, comparison results, and release record → regression checks and agreed release gates pass before traffic expands."
+            ]
+          ]
+        },
+        {
+          "v": "Handoff package (heuristics): transfer datasets and scoring versions, dashboards and alert definitions, a validated version, and rollback instructions. Identify business, technical, data, and operations owners, escalation paths, and unresolved risks. Rehearse code rollback separately from handling external side effects; restoring a version does not undo business writes."
+        },
+        {
+          "v": "Official basis: Anthropic's eval article treats evaluation suites as artifacts with ongoing maintenance and clear ownership. Offline evaluations help catch regressions before release, while production monitoring reveals issues in live operation. The five-phase sequence and gates are teaching heuristics; risks can send work back to an earlier phase. The source URL is in docs/sources.md 6.5."
+        },
+        {
+          "v": "Continuous iteration (heuristics): see 1.2 and 6.3 for feedback, and 4.1 through 4.5 for evaluation, experiments, diagnosis, and optimization. Retain input evidence, versions, results, and approval records for each change. Revisit discovery and design when goals or data boundaries change substantially."
+        },
+        {
+          "v": [
+            "If only the code has been delivered → transfer evaluations, monitoring, and responsibilities, because deployability does not establish operational readiness.",
+            "If live metrics cross agreed limits → follow the degradation or rollback plan, because expanding traffic can increase the impact.",
+            "If a promising change fails regression checks → pause rollout and investigate, because new gains do not excuse lost capabilities.",
+            "If the business scope expands → revisit success criteria and risks, because earlier acceptance evidence covers the earlier scope."
+          ],
+          "title": "Decision rules (heuristics)"
+        },
+        {
+          "v": [
+            "Ending the project at launch leaves subsequent feedback without an owner.",
+            "Relying on a verbal handoff prevents reproduction and traceability.",
+            "Reusing old evaluation results after a change disconnects evidence from the tested version."
+          ],
+          "title": "Common traps (heuristics)"
+        },
+        {
+          "head": [
+            "Question cue (heuristics)",
+            "Best direction"
+          ],
+          "rows": [
+            [
+              "A new team takes ownership",
+              "Check evaluations, alerts, rollback, and owners"
+            ],
+            [
+              "Quality drops after launch",
+              "Apply the response plan and feed cases into evaluation"
+            ],
+            [
+              "New business falls outside the original scope",
+              "Return to discovery and design"
+            ],
+            [
+              "Existing capabilities regress before release",
+              "Block rollout and diagnose the regression"
+            ]
+          ]
         }
       ]
     },

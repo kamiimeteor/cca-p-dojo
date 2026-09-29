@@ -15,6 +15,19 @@ const fail = (message) => {
 };
 const hasExplanation = (w, index) =>
   w && typeof w[index] === 'string' && w[index].trim().length > 0;
+// 每个选项都必须是非空字符串；返回不合格选项的下标，供正式校验和下方的反例自检共用。
+const emptyOptionIndexes = (options) =>
+  (Array.isArray(options) ? options : []).reduce((bad, option, index) =>
+    (typeof option === 'string' && option.trim().length > 0 ? bad : bad.concat(index)), []);
+
+// 反例自检：构造含 null、空白串和非字符串的选项数组，断言必须被检出，防止这条校验失效。
+{
+  const counterexample = ['有效选项', null, '   ', 42, '另一个有效选项'];
+  const caught = emptyOptionIndexes(counterexample).join(',');
+  if (caught !== '1,2,3') fail(`选项非空断言的内存反例未被正确检出（得到：${caught || '无'}；应为：1,2,3）`);
+  if (emptyOptionIndexes(['A', 'B', 'C', 'D']).length) fail('选项非空断言误报了全部有效的选项');
+}
+
 const indexSet = (w, optionCount, label) => {
   const indexes = Object.keys(w || {});
   for (const rawIndex of indexes) {
@@ -31,6 +44,16 @@ for (const question of QUESTIONS) {
   if (!english) {
     fail(`${question.id} 缺少英文题目`);
     continue;
+  }
+
+  for (const index of emptyOptionIndexes(question.o)) {
+    fail(`${question.id}#${index} 中文选项为空或不是字符串（${JSON.stringify(question.o[index])}）`);
+  }
+  if (!Array.isArray(english.o) || english.o.length !== question.o.length) {
+    fail(`${question.id} 英文选项数量与中文不一致`);
+  }
+  for (const index of emptyOptionIndexes(english.o)) {
+    fail(`${question.id}#${index} 英文选项为空或不是字符串（${JSON.stringify(english.o[index])}）`);
   }
 
   const answers = new Set([].concat(question.a));
@@ -75,5 +98,5 @@ for (const id of Object.keys(CONTENT_EN.questions)) {
   if (!known.has(id)) fail(`${id} 只有英文题目，没有对应中文题目`);
 }
 
-if (!bad) console.log(`✓ ${QUESTIONS.length} 道题的中英文逐项解析完整，长度、near 和 w 下标均通过校验`);
+if (!bad) console.log(`✓ ${QUESTIONS.length} 道题的中英文选项均为非空字符串，逐项解析完整，长度、near 和 w 下标均通过校验`);
 process.exit(bad ? 1 : 0);

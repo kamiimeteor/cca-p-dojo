@@ -284,3 +284,28 @@ D7 查阅日期：2026-09-29。Claude Code 配置与行为以 code.claude.com �
 - [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)：核实失败测试复现与测试输出验证，支持本文非生产复现和回归的教学流程。
 - [Configure permissions](https://code.claude.com/docs/en/permissions)：核实执行端强制权限、CLAUDE.md 不改变授权、沙箱的操作系统边界；核实启用沙箱且 autoAllowBashIfSandboxed 默认为 true 时整工具 Bash ask 的替代机制、Plan 模式例外、内容限定 ask 与显式 deny 仍生效；针对关键路径的 `rm` / `rmdir` 仍走常规权限流程，不在沙箱内运行的命令（如 excluded commands）照常遵守整工具 `Bash` ask 规则。
 - [Security](https://code.claude.com/docs/en/security)：核实手动模式的只读起点、显式授权和审查建议；生产只读凭证、脱敏、必要写操作人工审批与回滚方案为本文经验法则，不声称 Claude Code 自动识别生产环境或自带组织审批流程。4.4、4.6 与 5.3 的分工按本项目章节定义。
+## 6.1
+
+D6 查阅日期：2026-09-29。下列 URL 为本次实际查阅来源。发现问题、ADR 模板、受众沟通、服务约定、文档清单、阶段门禁及所有决策规则均为原创经验法则，不是 Anthropic 的统一流程或强制要求；本域不涉及具体模型型号或定价。
+
+- [Prompt engineering overview](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview)：核实该指南的三项前提：明确成功标准、实测方法、待改进的初稿提示；缺少时建议先建立。不将指南前提扩张为所有项目的强制流程。
+- [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实成功标准的四项特征：具体、可测、可实现、相关；也核实评估反映实际任务分布并考虑边界样本。问题陈述、约束和风险清单是本文的经验法则。
+
+## 6.2
+
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实可在固定任务集上跟踪延迟、token、每任务成本、错误率。本文把成功任务成本、人工复核成本、受众分工和 ADR 的背景／选项／决策／后果结构标为经验法则；原文不规定该 ADR 模板。
+- [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实任务相关的多维成功标准及质量、延迟、价格等考量；不把单一指标改善外推为整体达标。
+
+## 6.3
+
+- [Google SRE: Service Level Objectives](https://sre.google/sre-book/service-level-objectives/)：核实 SLI 为明确定义的量化指标、SLO 为由指标衡量的目标值或范围、SLA 包含目标达成或未达成的后果；后果不限于金钱。本节只引用术语定义，不声称 Google 为 LLM 规定质量条款。
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实输出在运行间变化，以及自动化评估（Automated evals）、生产监控、用户反馈、A/B、人工轨迹复核、系统化人工研究（Systematic human studies）的互补性；Step 1 支持把真实用户报告的失败转为测试用例。脱敏、优先级、渐进放量与 SLA 同时覆盖质量下限、延迟、可用性是本文经验法则，不是供应商合同承诺。
+
+## 6.4
+
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实 Step 2：好的任务应让两位领域专家独立判断时得出相同的通过／失败结论；为每个任务准备参考解法有助于证明任务可解，并验证评分器配置正确。任务说明含糊带来指标噪声，评分准则含糊导致判定不一致；不把这些建议写成官方文档交付模板。
+- [How we contain Claude across products](https://www.anthropic.com/engineering/how-we-contain-claude)：核实模型层控制影响行为倾向，环境访问边界约束可执行能力；支持“提示限制不能代替执行控制”。架构图、数据流、提示版本、工具权限、评估、运维手册和实施指导清单均为经验法则。
+
+## 6.5
+
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实 Step 8 中评估集的持续维护与明确归属，以及发布前评估、上线后监控的互补作用。五阶段及各阶段产出、门禁、交接包、回滚演练与重新发现条件是本文经验法则；不声称官方规定了固定生命周期流程。
