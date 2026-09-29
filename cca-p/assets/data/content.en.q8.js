@@ -20,8 +20,8 @@ Object.assign(CONTENT_EN.questions, {
     "o": [
       "Compare token charges for one successful call and total the resulting call bills",
       "Compare average time to first output and consider throughput changes",
-      "Compare cost per accepted task and include retries and staff review",
-      "Compare discharge summaries completed per batch and tally model call frequency"
+      "Compare total spend per accepted task, counting retries and staff review",
+      "Compare discharge records completed per batch and tally model call frequency"
     ],
     "e": "With quality held constant, cost per accepted task includes unsuccessful attempts and review. A lower token price can still lead to higher total expenditure. See notes 2.1.",
     "w": {
@@ -33,15 +33,15 @@ Object.assign(CONTENT_EN.questions, {
   "q156": {
     "q": "An engineering team is exploring a code migration with complex dependencies across modules. It first needs to establish whether acceptable quality is feasible; latency and budget permit a capability-first approach. Which experiment follows the usual recommended starting point?",
     "o": [
-      "Begin with Haiku 4.5 and evaluate the migration approaches by their time to first response",
+      "Begin with Haiku 4.5, test quality on actual migration tasks, then decide whether to upgrade",
       "Begin with Opus 5.5, refine the prompt, and evaluate before considering a lower tier",
-      "Begin with Sonnet 5.5, evaluate first, then screen migration approaches based on standard input price",
+      "Begin with Sonnet 5.5, assess it on actual migration samples, then choose the tier",
       "Begin with Fable 5.1, then keep subsequent migrations on the strongest capability tier"
     ],
     "e": "The capability-first path starts with Opus 5.5, then refines and evaluates the task before exploring lower effort or a cheaper tier. Fable 5.1 is a further option when demanding tasks still expose a capability gap. See notes 2.1.",
     "w": {
-      "0": "[Model substitution] Starting a complex migration of unknown feasibility on the fastest tier lacks support, and time to first response says nothing about migration quality.",
-      "2": "[Model substitution] Choosing a middle tier without the capability-first baseline lacks support, and screening by input price after that evaluation does not measure the dependency constraints.",
+      "0": "[Model substitution] The scenario permits capability-first work and asks for the usual starting point; beginning on the fastest tier lacks support.",
+      "2": "[Model substitution] Trying a middle tier before establishing the usual capability-first baseline lacks support.",
       "3": "[Model substitution] Fixing the strongest tier before testing the usual capability-first baseline lacks evaluation support."
     }
   },
@@ -52,7 +52,7 @@ Object.assign(CONTENT_EN.questions, {
       "Expand the scheduling history with more timetables from previous years",
       "Infer a fixed token allowance from the configured effort level and use it to evaluate the savings",
       "Evaluate overhead before and after the change by actual token usage and task quality",
-      "Use a higher effort setting and confirm on the original evaluation set that reasoning is more thorough"
+      "Raise the effort setting and confirm on the original evaluation set that reasoning is more thorough"
     ],
     "e": "Effort is soft guidance, not a fixed token allocation. Once quality is acceptable, a lower setting can be evaluated using actual usage and the original task set. See notes 2.1.",
     "w": {
@@ -67,7 +67,7 @@ Object.assign(CONTENT_EN.questions, {
       "Keep Opus 5.5 at max, add supporting analysis material, and then run a regression on the original task set",
       "Run Sonnet 5.5 at max to benefit from its lower standard input price",
       "Move to Haiku 4.5 and evaluate the release by its fastest relative latency",
-      "Switch to the more capable Fable 5.1 and keep running the original task set as a regression suite"
+      "Switch to the more capable Fable 5.1 and use the original task set as a regression suite"
     ],
     "e": "Opus 5.5 still has a capability gap after refinement and high-effort evaluation. The measured Fable 5.1 configuration meets the project constraints, supporting the switch. See notes 2.1.",
     "w": {
@@ -109,14 +109,14 @@ Object.assign(CONTENT_EN.questions, {
   "q161": {
     "q": "A finance team extracts expense_type and evidence from reimbursement notes, and the response format is stable. When a note omits the purpose, the model often guesses a category; the team accepts unknown values and wants supported results retained. Which prompt change fits best?",
     "o": [
-      "Add reference descriptions of common expense categories to the request",
+      "Include similar reimbursement notes and require categories to cite evidence from them",
       "Specify unknown for missing evidence and require a supporting passage for each category",
       "Move to a more capable model and retain the existing category and field instructions",
       "Specify the format of the returned fields and evaluate extraction quality by field completeness"
     ],
     "e": "The task allows unknown values, so the output contract should specify how to handle insufficient evidence. A populated field is not necessarily a supported classification. See notes 2.2.",
     "w": {
-      "0": "[Unmeasured expansion] Descriptions of common categories do not establish this reimbursement’s purpose and may encourage guessing.",
+      "0": "[Unmeasured expansion] Evidence from other notes cannot establish this note’s purpose; similar claims only add categories the model can borrow.",
       "2": "[Model substitution] The missing element is an unknown-value rule; no evaluation supports a model switch as the remedy.",
       "3": "[Metric substitution] The format is already stable; field completeness measures structure, not whether evidence supports the category."
     }
@@ -155,7 +155,7 @@ Object.assign(CONTENT_EN.questions, {
   "q164": {
     "q": "A hospital administration team needs to turn de-identified equipment-maintenance notices into registration summaries. The required fields and wording rules can be stated directly, and the team has no prompt baseline. Which approach uses the fewest components to find out whether those rules are sufficient?",
     "o": [
-      "Build drafting and review agents, then merge their output into summaries",
+      "Build drafting and review agents, then merge their output",
       "List the requirements in the prompt, then test a baseline without examples",
       "Expand the example set with common notices first, then evaluate the few-shot prompt",
       "Increase the current model’s reasoning effort to generate a more detailed rewriting process"
@@ -170,10 +170,10 @@ Object.assign(CONTENT_EN.questions, {
   "q165": {
     "q": "A product-review classifier’s examples all contain clear praise, and ordinary positive reviews pass testing. Polite comments about returned products are often misclassified as positive; the team can change only the few-shot examples while keeping the rules and model fixed. Which revision is best supported?",
     "o": [
-      "Expand the clear-praise examples to cover more product names and review lengths",
-      "Expand the reasoning text in the examples with detailed explanations of the existing positive reviews",
-      "Expand the confusable examples with more polite-return and near-praise cases and their ideal categories",
-      "Expand the examples to common support topics such as shipping and promotion inquiries"
+      "Add clear-praise examples, expanding coverage of product names and review lengths",
+      "Add reasoning text to the examples, expanding explanations of the existing positive reviews",
+      "Add contrasting examples of polite negative reviews and similar positive reviews, expanding boundary coverage with ideal categories",
+      "Add examples from common support topics, expanding coverage to shipping and promotion inquiries"
     ],
     "e": "The failures concern the boundary between polite wording and actual sentiment. Relevant contrasting inputs with ideal labels teach that distinction while preserving ordinary-case coverage. See notes 2.3.",
     "w": {
@@ -195,7 +195,7 @@ Object.assign(CONTENT_EN.questions, {
     "w": {
       "1": "[Wrong-layer diagnosis] Haiku 4.5 does not support effort, so this field cannot configure its manual thinking mode.",
       "2": "[Wrong-layer diagnosis] This model supports manual extended thinking, not the adaptive configuration.",
-      "3": "[Prompt as enforcement] Prompt text stands in for the API thinking parameters; it does not enable manual thinking or run the requested experiment."
+      "3": "[Wrong-layer diagnosis] A step-by-step instruction works at the prompt layer; it does not change the API thinking configuration or enable manual thinking."
     }
   },
   "q167": {
@@ -203,7 +203,7 @@ Object.assign(CONTENT_EN.questions, {
     "o": [
       "Change the thinking type to disabled and leave effort at xhigh",
       "Keep between_tools and set effort to low, medium, or high",
-      "Use adaptive thinking and continue testing at xhigh",
+      "Set thinking to adaptive and continue testing at xhigh",
       "Remove the other thinking fields that the between_tools mode does not accept",
       "Leave the mode and effort unchanged and expand the tool-use examples in the request"
     ],
@@ -291,19 +291,19 @@ Object.assign(CONTENT_EN.questions, {
     }
   },
   "q173": {
-    "q": "A land-record investigation needs to compact its earlier conversation. A trial summary dropped an exception that still applies; the original evidence remains available, and server-side compaction is supported. The investigation may continue only after that condition is preserved. Which actions fit? Select 2.",
+    "q": "A municipal statistics office uses Sonnet 5.5, with thinking left in its default adaptive mode, to generate a long commentary on its statistical yearbook in one request. The body text is expected to run well beyond 128K tokens, and input counting shows plenty of context capacity left. The team must revise the generation plan before sending. Which actions fit? Select 2.",
     "o": [
-      "Keep recent turns and recover older exceptions in later questions",
-      "Preserve decisions, open tasks, and evidence locations for exceptions in the compacted summary",
-      "Evaluate compaction by the number of tokens removed and record the input saved",
-      "Give summary generation more reasoning effort and retain the current compaction sign-off process",
-      "Pause subsequent investigation calls, check active conditions in the summary, and restore omissions before resuming"
+      "Set the maximum output from the context space still free and generate the full text in a single request",
+      "Switch to Haiku 4.5 for faster output and generate the full text in a single request",
+      "Plan section lengths within the ordinary per-request output limit and use several requests to continue the text",
+      "Enable server-side compaction to shrink input and free context space for the answer",
+      "Reserve part of each request’s output budget for thinking, leaving body text below the limit"
     ],
-    "e": "A summary is not a lossless archive. Compaction should preserve task state and evidence locations, and active conditions must be checked before the investigation resumes. See notes 2.4.",
+    "e": "Context capacity is not an output allowance: an ordinary Sonnet 5.5 request can output at most 128K tokens, and current-turn thinking also uses that budget. Generate the text in sections and leave room for thinking. See notes 2.4.",
     "w": {
-      "0": "[Data-shape mismatch] Recent turns may omit exceptions from earlier evidence; chronological truncation does not preserve active state.",
-      "2": "[Metric substitution] Token savings do not measure whether the conditions required to continue the investigation survived.",
-      "3": "[Unmeasured expansion] The failure concerns preservation and acceptance checks; more reasoning does not supply the missing condition check."
+      "0": "[Metric substitution] Remaining context capacity is not an output allowance; the per-request output limit still caps the response.",
+      "1": "[Model substitution] Haiku 4.5 has a lower per-request output limit, so switching models cannot fit the full text in one request.",
+      "3": "[Wrong-layer diagnosis] Context capacity is already sufficient; the constraint is the output limit, which compacting input does not raise."
     }
   },
   "q174": {
@@ -311,7 +311,7 @@ Object.assign(CONTENT_EN.questions, {
     "o": [
       "Fix the assembly order, record versions, gate changes on regression results, and keep a rollback configuration",
       "Cache the latest module text and check prompt reuse through cache-read volume",
-      "Give the modules resident agents and let a coordinator negotiate the rules for the current request",
+      "Assign a persistent agent to each module and let a coordinator negotiate the rules for the current request",
       "Run regression evaluations on readability scores and judge module updates by the score changes"
     ],
     "e": "Deterministic assembly and version records make a request traceable. Regression evaluation and a retained configuration allow rollback when behavior deteriorates; caching does not manage module versions. See notes 2.5.",
@@ -332,7 +332,7 @@ Object.assign(CONTENT_EN.questions, {
     "e": "Haiku 4.5 requires at least 4,096 tokens for caching, while Sonnet 5.5 requires 512. A shorter prefix is not cached and produces no error; the existing task evaluation supports switching to the model whose threshold it meets. See notes 2.5.",
     "w": {
       "0": "[Wrong-layer diagnosis] TTL controls retention, not the minimum cache length; the prefix would still be too short.",
-      "1": "[Unmeasured expansion] The task has no identified need for the handbook, and adding it changes the prefix that must be retained.",
+      "1": "[Compliance shortcut] Adding the handbook changes a prefix that must stay verbatim, bypassing a stated constraint to obtain caching.",
       "2": "[Metric substitution] Repetition counts are not cache writes or reads and do not establish that the threshold is met."
     }
   },
@@ -356,14 +356,14 @@ Object.assign(CONTENT_EN.questions, {
     "o": [
       "Run the existing script and pass its output into context for the model’s explanation",
       "Expand the request context with the script source and its dependency files",
-      "Check result completeness against the number of files in the Skill and record the resources loaded",
+      "Add the inventory source-file paths to context so the explanation can cite where discrepant records come from",
       "Expand the script output so discrepant records and their locations enter context for the explanation",
       "Use a more capable model to read the completion marker and retain the current script output"
     ],
     "e": "When a Skill script runs, its output enters context; the code itself need not. Since the missing information is known, the output should include the discrepancies and locations needed for the explanation. See notes 2.5.",
     "w": {
       "1": "[Unmeasured expansion] The model needs execution results; source code and dependencies do not supply this run’s discrepancies.",
-      "2": "[Metric substitution] File counts measure resource volume, not whether discrepancy results and locations reached the model.",
+      "2": "[Data-shape mismatch] File paths locate data files, not which records differ or where; the script output must supply those results.",
       "4": "[Model substitution] The completion marker lacks discrepancy data; a stronger model cannot read results the script never emitted."
     }
   }
