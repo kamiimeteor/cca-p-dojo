@@ -156,6 +156,6 @@ try {
   assert.equal(writeCoverage(output, renderCoverage(real, '2026-01-02T00:00:00.000Z')), false);
   assert.equal(fs.readFileSync(output, 'utf8'), generated);
   assert.equal(fs.statSync(output, { bigint: true }).mtimeNs, time);
-  assert.equal(writeCoverage(output, generated.replace('待写', '✓')), true);
+  assert.equal(writeCoverage(output, generated + '<!-- 内容变化 -->\n'), true);
 } finally { fs.unlinkSync(output); fs.rmdirSync(dir); }
 console.log('✓ 覆盖图无内容变化时不改文件、时间戳或 mtime；内容变化时更新');
