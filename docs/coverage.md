@@ -1,6 +1,6 @@
 # 蓝图覆盖图
 
-生成时间：2026-09-29T09:40:52.148Z
+生成时间：2026-09-29T14:42:32.734Z
 
 由 scripts/gen-coverage.js 生成，勿手改。
 
@@ -53,11 +53,11 @@
 
 | Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
 | --- | --- | --- | --- | --- | --- |
-| 5.1 | 护栏与安全控制 | Implement guardrails and safety controls | 待写 | — | 0 |
-| 5.2 | LLM 系统的风险、局限与失效模式 | Identify risks, limitations, and failure modes of LLM systems | 待写 | — | 0 |
-| 5.3 | 人在回路验证策略 | Apply human-in-the-loop validation strategies | 待写 | — | 0 |
-| 5.4 | 合规：GDPR / HIPAA / FedRAMP | Ensure compliance with regulations (e.g., GDPR, HIPAA, FedRAMP) | 待写 | — | 0 |
-| 5.5 | 伦理：偏见、公平、透明 | Address ethical AI considerations (bias, fairness, transparency) | 待写 | — | 0 |
+| 5.1 | 护栏与安全控制 | Implement guardrails and safety controls | ✓ | q100, q101, q102, q103, q104, q105 | 6 |
+| 5.2 | LLM 系统的风险、局限与失效模式 | Identify risks, limitations, and failure modes of LLM systems | ✓ | q106, q107, q108, q109, q110 | 5 |
+| 5.3 | 人在回路验证策略 | Apply human-in-the-loop validation strategies | ✓ | q111, q112, q113, q114, q115 | 5 |
+| 5.4 | 合规：GDPR / HIPAA / FedRAMP | Ensure compliance with regulations (e.g., GDPR, HIPAA, FedRAMP) | ✓ | q116, q117, q118, q119, q120, q121 | 6 |
+| 5.5 | 伦理：偏见、公平、透明 | Address ethical AI considerations (bias, fairness, transparency) | ✓ | q122, q123, q124, q125, q126 | 5 |
 
 ## d6 干系人沟通与生命周期管理 / Stakeholder Communication & Lifecycle Management
 

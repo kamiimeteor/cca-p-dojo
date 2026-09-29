@@ -172,3 +172,50 @@ D4 查阅日期：2026-09-29。以下指标口径、实验设计、诊断流程�
 ## R.1
 
 干扰项名称、收紧后的定义及单标签优先级为本项目原创标注约定，不是官方分类。事实背景沿用 3.1–3.8 的对应来源；跨组织 agent-to-agent 的任务契约是本文经验法则，不声称某个 A2A 协议的字段或原生支持。
+
+## D5 核实说明
+
+查阅日期：2026-09-29。以下按 5.1–5.5 列出实际读取的官方来源与支持范围。所有发现／缓解流程、决策规则和题目信号均按正文区分官方条件与工程经验法则。
+
+## 5.1
+
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations)：核实允许不确定、>20k tokens 长文档先抽原文、逐项引用核验、四种进阶方法，以及无法彻底消除幻觉。
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/increase-consistency)：核实格式、预填充、示例、检索、复杂任务串联提示与保持角色六种一致性方法，以及严格 schema 的结构化输出建议；完整保留原页 Claude 4.6 及以后型号、Claude Mythos Preview 不支持预填充的条件，并在正文附 URL 和查阅日期。
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)：核实直接与间接注入区分、直接攻击四类控制（含 system prompt 的伦理与法律边界及明确拒答方式）、间接攻击八项措施（自身指令放 tool_result 后的 user turn，支持的模型也可用对话中途 system 消息）、监控与组合防护；执行分层为经验法则。
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak)：核实优先筛查与后处理、上下文分离、最少机密、定期审计，复杂防漏提示的性能代价与无绝对保证。
+- [https://www.anthropic.com/engineering/building-effective-agents](https://www.anthropic.com/engineering/building-effective-agents)：核实沙箱、护栏与人工检查点；执行前审批安排为经验法则。
+
+## 5.2
+
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations)：核实幻觉及残余风险；发现与缓解表是原创工程归纳。
+- [https://platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview)：核实存在 reliable knowledge cutoff 与 training data cutoff；正文不新增型号、日期或配置对照表。
+- [https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实非确定性、重复 trial、轨迹与结果区分、人工校准；自报置信度不直接当校准概率为工程判断。
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)：核实恶意用户输入及第三方文档、邮件、工具结果的注入风险与权限限制。
+- [https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-prompt-leak)：核实敏感提示泄露与输出筛查。
+- [https://www.anthropic.com/engineering/building-effective-agents](https://www.anthropic.com/engineering/building-effective-agents)：核实自主 agent 的成本与错误累积、检查点及停止条件；预算和恢复流程明确标为经验法则。
+
+## 5.3
+
+- [https://www.anthropic.com/legal/aup](https://www.anthropic.com/legal/aup)：核实全部七类高风险用途（保留医疗中一般 wellness 例外）、直接影响个人的建议／推荐／主观决策的专业人工事前审核，以及直接展示输出时每会话披露条件。
+- [https://www.anthropic.com/engineering/building-effective-agents](https://www.anthropic.com/engineering/building-effective-agents)：核实 agent 可在检查点或阻塞时请求人工反馈、设置停止条件；四类线上介入形式与审批版本绑定为经验法则。
+- [https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实人工评估成本与线上复核；风险分层、等待和改判度量是工程方案，与 4.2 评估用途区分。
+
+## 5.4
+
+- [https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng)：通过 Firecrawl 读取 EUR-Lex 原文：第5条全部原则、第12–22条主体权利、第25与32条按风险的假名化／必要数据／保存及访问控制、第44条跨境及后续转移；不添加法律实施细节。
+- [https://commission.europa.eu/law/law-topic/data-protection/data-protection-explained_en](https://commission.europa.eu/law/law-topic/data-protection/data-protection-explained_en)：核实可重新识别的假名化数据仍为个人数据，不能把脱敏当作自动脱离 GDPR。
+- [https://www.hhs.gov/hipaa/for-professionals/special-topics/health-information-technology/cloud-computing/index.html](https://www.hhs.gov/hipaa/for-professionals/special-topics/health-information-technology/cloud-computing/index.html)：核实 ePHI 云处理的业务伙伴身份、BAA 及客户自身适用义务。
+- [https://www.hhs.gov/hipaa/for-professionals/security/laws-regulations/index.html](https://www.hhs.gov/hipaa/for-professionals/security/laws-regulations/index.html)：核实访问控制与记录／检查 ePHI 系统活动的审计控制。
+- [https://platform.claude.com/docs/en/manage-claude/api-and-data-retention](https://platform.claude.com/docs/en/manage-claude/api-and-data-retention)：核实签 BAA + HIPAA-enabled 组织 + 合格功能；HIPAA readiness 不另要求 ZDR。ZDR 由客户申请、Anthropic 账户团队按组织开启，受功能、模型、违规标记及依法留存（legal hold）例外限制；正文不扩写其他平台覆盖。
+- [https://platform.claude.com/docs/en/manage-claude/data-residency](https://platform.claude.com/docs/en/manage-claude/data-residency)：核实独立 inference geo / workspace geo；inference_geo 适用于 Claude API 和 Claude Platform on AWS 上的 Claude 4.6 及以上模型，值为 us 或 global；Bedrock 和 Google Cloud 由端点 URL 或 inference profile 决定推理区域，该参数不适用。workspace geo 当前仅 us，涉及静态存储和端点处理。
+- [https://www.fedramp.gov/brand/fedramp-marketplace/marketplace-designations/](https://www.fedramp.gov/brand/fedramp-marketplace/marketplace-designations/)：核实现行 A/B/C/D 与旧 Ready/Low/Moderate/High 对照，以及 Class 表示评估材料深度而非产品安全等级。
+- [https://www.fedramp.gov/notices/0008/](https://www.fedramp.gov/notices/0008/)：核实 FedRAMP certification 与机构 ATO 不同，机构仍评估材料并作运行授权。
+- [https://support.claude.com/en/articles/13756069](https://support.claude.com/en/articles/13756069)：2026-09-29 打开 Public Sector FAQ，核实 FedRAMP High 的三条路径：Claude for Government、Amazon Bedrock in AWS GovCloud、Google Vertex AI with Assured Workloads。FedRAMP 与 DoD Impact Levels 认证云服务（IaaS／PaaS／SaaS）；模型是部署在获授权环境中的软件组件，客户通过托管平台维持合规状态。此条替换旧 Bedrock 公告来源。
+
+## 5.5
+
+- [https://www.nist.gov/news-events/news/2022/03/theres-more-ai-bias-biased-data-nist-report-highlights](https://www.nist.gov/news-events/news/2022/03/theres-more-ai-bias-biased-data-nist-report-highlights)：核实数据以外还存在人及制度偏见；数据／提示／评估三行是本笔记的排查视角，不冒充 NIST 官方分类。
+- [https://www.anthropic.com/news/evaluating-and-mitigating-discrimination-in-language-model-decisions](https://www.anthropic.com/news/evaluating-and-mitigating-discrimination-in-language-model-decisions)：核实 2023 年 70 场景、系统改变人口属性、Claude 2.0 在部分条件下的正负歧视、提示缓解及不认可高风险自动决策的研究边界。
+- [https://www.anthropic.com/legal/aup](https://www.anthropic.com/legal/aup)：核实面向消费者的聊天机器人与外部交互 agent 至少每次会话开始披露 AI 身份；高风险披露和审核参见 5.3。
+- [https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/](https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/)：核实透明、解释、局限与公平性治理；展示来源、申诉及更正入口为工程经验法则。
+- [https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实判分校准与复核；分群指标、样本量和配对回归的具体安排为本文经验法则。

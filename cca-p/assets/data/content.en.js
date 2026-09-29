@@ -1779,7 +1779,91 @@ const CONTENT_EN = {
       "title": "Implement guardrails and safety controls",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "What this objective tests",
+          "v": "Protect input, output, and execution, then test whether failures can still cause harm."
+        },
+        {
+          "head": [
+            "Control layer (engineering heuristics)",
+            "Check and response"
+          ],
+          "rows": [
+            [
+              "Input",
+              "Screen harmful content and injection attempts. Documents, pages, emails, and tool results can carry indirect injections."
+            ],
+            [
+              "Output",
+              "Validate structure and business meaning; detect personal data, secrets, and prompt leaks. Handle refusals and truncation separately; see 1.2."
+            ],
+            [
+              "Execution",
+              "Restrict tools, validate arguments, and use sandboxes. See 3.1 for excess capabilities and 3.2 for identity and authorization."
+            ]
+          ]
+        },
+        {
+          "v": "The injection guide covers harmlessness screening, input validation, system prompts that emphasize ethical and legal boundaries and explicitly tell Claude how to refuse, plus possible throttling or bans for repeat attackers. For indirect attacks: deliver external text in tool_result, identify its source, declare it untrusted, JSON-encode where possible, send your instructions in a user turn after the tool_result block or, on supported models, use a mid-conversation system message, restrict data and actions, screen tool results, and red-team before deployment. Monitor outputs and combine safeguards."
+        },
+        {
+          "head": [
+            "Official guardrail topic",
+            "Methods and limits"
+          ],
+          "rows": [
+            [
+              "Reduce hallucinations",
+              "Allow uncertainty; extract quotes first for documents over 20k tokens; check each claim against citations. Advanced options include reasoning checks, repeated comparisons, iterative verification, and limiting external knowledge. None eliminates hallucinations."
+            ],
+            [
+              "Improve consistency",
+              "Specify formats, prefill responses, provide examples, use retrieval, chain prompts for complex tasks, and maintain the role. Prefilling is unsupported on Claude 4.6 and later models and Claude Mythos Preview. Prefer structured outputs for strict JSON schema use cases. (official page, 2026-09-29)"
+            ],
+            [
+              "Reduce prompt leaks",
+              "Try output screening and post-processing first; separate context from queries, omit unnecessary secrets, and audit regularly. Complex leak-resistant prompts can hurt performance; no method guarantees secrecy."
+            ]
+          ]
+        },
+        {
+          "title": "Decision rules (engineering heuristics)",
+          "v": [
+            "If external content contains instructions → isolate and screen it, because its source grants no authority.",
+            "If output contains sensitive data → block it before delivery, because logs cannot undo disclosure.",
+            "If an action has serious consequences → gate execution on approval, because valid structure can still describe a harmful action."
+          ]
+        },
+        {
+          "title": "Common traps (engineering heuristics)",
+          "v": [
+            "Treat a clean screen as a safety guarantee: execution still needs limits.",
+            "Treat the system prompt as a secret vault: it can still leak.",
+            "Replace pre-execution checks with logs: see R.1."
+          ]
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "External document redirects the task",
+              "Isolate the source and screen content"
+            ],
+            [
+              "Valid JSON, wrong business action",
+              "Business validation"
+            ],
+            [
+              "Reply exposes internal content",
+              "Output screening and minimal context"
+            ],
+            [
+              "Dangerous tools execute directly",
+              "Permissions, sandboxing, and approval"
+            ]
+          ]
         }
       ]
     },
@@ -1787,7 +1871,108 @@ const CONTENT_EN = {
       "title": "Identify risks, limitations, and failure modes of LLM systems",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "What this objective tests",
+          "v": "Diagnose failures through evidence, behavior, and resource use before choosing a mitigation."
+        },
+        {
+          "head": [
+            "Information risk",
+            "Detection → mitigation (engineering heuristics)"
+          ],
+          "rows": [
+            [
+              "Hallucination",
+              "Compare claims with sources for invented citations or contradictions → retrieve evidence, allow uncertainty, and verify with humans."
+            ],
+            [
+              "Knowledge cutoff",
+              "Check source dates and current facts → consult current official material or live tools; see 3.5 for index maintenance."
+            ],
+            [
+              "Nondeterminism",
+              "Repeat identical inputs and measure pass rates and disagreement → hold evaluation settings fixed and validate outputs; see 4.2."
+            ],
+            [
+              "Direct / indirect injection",
+              "Test hostile user input and instructions embedded in documents or tool results; inspect unauthorized actions → separate trusted instructions from data; see 5.1."
+            ]
+          ]
+        },
+        {
+          "head": [
+            "Behavior and operating risk",
+            "Detection → mitigation (engineering heuristics)"
+          ],
+          "rows": [
+            [
+              "Overreliance",
+              "Sample unsupported acceptance and superficial reviews → show evidence and limitations; route serious decisions to qualified reviewers."
+            ],
+            [
+              "Data leakage",
+              "Scan outputs, logs, and tool arguments for sensitive fields → minimize, redact, restrict access, and control retention."
+            ],
+            [
+              "Runaway cost",
+              "Inspect unusual tokens, retries, tool calls, and durations → set task budgets, iteration limits, and stopping conditions; see 4.6 for accounting."
+            ],
+            [
+              "Tool misuse",
+              "Compare the tool, target, arguments, and actual state → validate at execution; inspect uncertain write status before retrying."
+            ],
+            [
+              "Compounding agent errors",
+              "Trace the first error into downstream steps → use stage checks, checkpoints, and local recovery; stop or hand off on failure."
+            ]
+          ]
+        },
+        {
+          "v": "Official documentation describes residual hallucination risk, model knowledge cutoffs, and the potential for autonomous agents to incur higher costs and compound errors. Heuristic: prioritize risks by consequence, likelihood, and recoverability. One successful run or fluent wording does not establish reliability; a model’s stated confidence is not automatically a calibrated probability."
+        },
+        {
+          "title": "Decision rules (engineering heuristics)",
+          "v": [
+            "If the answer depends on current state → fetch dated evidence, because model knowledge may be stale.",
+            "If identical tasks succeed inconsistently → repeat evaluations and inspect traces, because a single demonstration misses variation.",
+            "If a loop spends without progress → stop at the budget, because further calls may not repair the error.",
+            "If an upstream result is unverified → pause dependent steps, because the error can affect later actions."
+          ]
+        },
+        {
+          "title": "Common traps (engineering heuristics)",
+          "v": [
+            "Treat RAG as a guarantee against hallucination: citations may not support the claim.",
+            "Record success when the model says “done”: inspect the actual business state.",
+            "Substitute a larger model for budget and permission controls: see R.1."
+          ]
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Wrong answer about current policy",
+              "Check knowledge dates and live sources"
+            ],
+            [
+              "Identical task, varying outcomes",
+              "Repeat trials"
+            ],
+            [
+              "Email instructs data exfiltration",
+              "Indirect-injection defenses"
+            ],
+            [
+              "Errors increase down the chain",
+              "Stage checks and stopping conditions"
+            ],
+            [
+              "Spending spikes",
+              "Inspect retries, calls, and budgets"
+            ]
+          ]
         }
       ]
     },
@@ -1795,7 +1980,83 @@ const CONTENT_EN = {
       "title": "Apply human-in-the-loop validation strategies",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "What this objective tests",
+          "v": "Place human judgment before consequential action, with evidence, authority, and a handoff path."
+        },
+        {
+          "head": [
+            "Intervention (engineering heuristics)",
+            "Trigger and control"
+          ],
+          "rows": [
+            [
+              "Approval gate",
+              "Serious consequences, irreversible actions, or applicable compliance obligations: show the target, action, evidence, and impact before execution; wait for approval."
+            ],
+            [
+              "Sample review",
+              "Low-risk, recoverable work: combine random samples with targeted anomaly review. Sampling does not replace mandated review of each item before release."
+            ],
+            [
+              "Escalation",
+              "Conflicting or missing evidence, or low confidence: route to a qualified reviewer with an owner and deadline."
+            ],
+            [
+              "Human takeover",
+              "Repeated failure or a capability limit: pause automation and transfer the goal, evidence, completed actions, and pending state."
+            ]
+          ]
+        },
+        {
+          "v": "The Usage Policy lists legal, healthcare (excluding general wellness advice), insurance, finance, employment and housing, academic testing / accreditation / admissions, and media or professional journalism as high-risk categories. For advice, recommendations, or subjective decisions directly affecting individuals or consumers in these categories, a qualified professional in the field must review before dissemination or finalization. Outputs presented directly also require disclosure of AI involvement at least at the start of each session. Source: (official page, 2026-09-29)."
+        },
+        {
+          "v": "Operating heuristics: bind approval to a specific action and argument version; changes trigger another review, and timeouts remain pending or escalate. Confidence triggers combine evidence gaps, failed checks, and past evaluations instead of relying on self-ratings. Higher automation can reduce review work but may let errors through; review adds queueing delay and labor cost. Tier by risk and measure waiting time, overrides, and missed errors. Excessive prompts can encourage mechanical approval. Section 4.2 evaluates quality; this section controls release in production."
+        },
+        {
+          "title": "Decision rules (engineering heuristics)",
+          "v": [
+            "If an action is irreversible → obtain approval before execution, because later correction may be ineffective.",
+            "If evidence is insufficient → escalate or hand off, because stated confidence adds no evidence.",
+            "If low-risk volume is high → sample and review anomalies, because this limits waiting and review cost.",
+            "If compliance mandates prior review → retain the gate, because automation targets do not override that constraint."
+          ]
+        },
+        {
+          "title": "Common traps (engineering heuristics)",
+          "v": [
+            "Show only the conclusion: reviewers cannot check evidence or impact.",
+            "Approve automatically on timeout: waiting bypasses the gate.",
+            "Treat retrospective sampling as prior approval: they act at different points."
+          ]
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Serious or irreversible consequences",
+              "Prior approval"
+            ],
+            [
+              "Missing or conflicting evidence",
+              "Expert escalation"
+            ],
+            [
+              "Low risk, high volume",
+              "Sample review"
+            ],
+            [
+              "Repeated failures",
+              "Pause and hand off"
+            ],
+            [
+              "Human review with no owner",
+              "Define authority, deadlines, and handoff"
+            ]
+          ]
         }
       ]
     },
@@ -1803,7 +2064,95 @@ const CONTENT_EN = {
       "title": "Ensure compliance with regulations (e.g., GDPR, HIPAA, FedRAMP)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "What this objective tests",
+          "v": "Check data, configuration, and certification scope; customers retain their compliance obligations."
+        },
+        {
+          "head": [
+            "Framework",
+            "Official scope (2026-09-29)"
+          ],
+          "rows": [
+            [
+              "GDPR",
+              "Article 5: lawfulness, fairness and transparency; purpose limitation; minimization; accuracy; storage limitation; integrity and confidentiality; accountability. Articles 12–22 address rights to information, access, rectification, erasure, restriction, portability, objection, and rights concerning automated decisions, subject to applicable conditions. Article 44 governs international and onward transfers."
+            ],
+            [
+              "HIPAA",
+              "PHI means protected health information. A cloud provider creating, receiving, maintaining, or transmitting ePHI for a regulated entity is a business associate; the parties must sign a BAA and meet applicable HIPAA obligations."
+            ],
+            [
+              "FedRAMP",
+              "Current Classes A / B / C / D map to legacy Ready / Low / Moderate / High. Classes describe assessment-package depth, not a product security rating."
+            ]
+          ]
+        },
+        {
+          "head": [
+            "Claude capability",
+            "Official scope and conditions"
+          ],
+          "rows": [
+            [
+              "BAA",
+              "Claude API: sign a BAA, enable HIPAA readiness for the organization, and use eligible features; ZDR is not an additional requirement."
+            ],
+            [
+              "ZDR",
+              "Eligible API prompts and responses are not stored at rest after the response. Customers request ZDR; the Anthropic account team enables it separately for each organization, subject to feature, model, flagged-content, and legal-hold exceptions."
+            ],
+            [
+              "Residency",
+              "inference_geo controls inference (us / global) for Claude 4.6 and later models on the Claude API and Claude Platform on AWS. On Bedrock and Google Cloud, the endpoint URL or inference profile determines the inference region; this parameter does not apply. Workspace geo controls storage at rest and endpoint processing, currently us only. (official page, 2026-09-29)"
+            ],
+            [
+              "Cloud FedRAMP",
+              "The Public Sector FAQ lists three FedRAMP High paths: Claude for Government, Amazon Bedrock in AWS GovCloud, and Google Vertex AI with Assured Workloads. FedRAMP and DoD Impact Levels certify cloud services (IaaS / PaaS / SaaS); models are software components deployed in authorized environments. Customers maintain compliance through the hosting platform. (official page, 2026-09-29)"
+            ]
+          ]
+        },
+        {
+          "v": "Architecture controls: GDPR Articles 25 and 32 call for appropriate, risk-based measures such as pseudonymization; default processing limits cover necessary data, storage, and access. The HHS Security Rule includes access controls and mechanisms to record and examine activity in systems using ePHI."
+        },
+        {
+          "title": "Decision rules (engineering heuristics)",
+          "v": [
+            "If handling PHI → check the BAA and feature eligibility, because coverage is conditional.",
+            "If geography is constrained → check inference and storage separately, because the settings are independent.",
+            "If adopting a FedRAMP service → check agency ATO separately, because certification does not grant agency authority to operate."
+          ]
+        },
+        {
+          "title": "Common traps (engineering heuristics)",
+          "v": [
+            "Assume pseudonymization removes GDPR scope: re-identifiable data remains personal data.",
+            "Assume ZDR covers every feature: the eligibility table includes exclusions.",
+            "Treat a signed BAA as completed compliance: customer obligations still apply."
+          ]
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Minimization and purpose limitation",
+              "GDPR Article 5"
+            ],
+            [
+              "PHI in cloud services",
+              "Business associate and BAA"
+            ],
+            [
+              "Data location",
+              "Separate inference from storage"
+            ],
+            [
+              "High label",
+              "Check the FAQ's three paths and cloud-service authorization scope; do not treat it as model certification"
+            ]
+          ]
         }
       ]
     },
@@ -1811,7 +2160,98 @@ const CONTENT_EN = {
       "title": "Address ethical AI considerations (bias, fairness, transparency)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "What this objective tests",
+          "v": "Check differences across groups, disclose AI involvement, the basis for decisions, and limitations, and provide a human appeal path."
+        },
+        {
+          "head": [
+            "Bias source (engineering heuristics)",
+            "Detection and mitigation"
+          ],
+          "rows": [
+            [
+              "Data",
+              "Missing groups, biased labels, or historical records → inspect coverage and labeling; add representative examples."
+            ],
+            [
+              "Prompts",
+              "Wording, examples, or demographic stereotypes change judgments → compare paired prompts while holding task facts fixed."
+            ],
+            [
+              "Evaluation",
+              "Rubrics, judges, or sample distributions favor a group → audit by group, calibrate with experts, and report sample sizes."
+            ]
+          ]
+        },
+        {
+          "v": "Historical research example: Anthropic’s 2023 study varied demographic attributes across 70 decision scenarios and found positive and negative discrimination in some Claude 2.0 settings. Prompt interventions reduced these differences; the paper did not endorse or permit automated decisions in the high-risk cases studied. This does not establish that current models are unbiased. Source: (official page, checked 2026-09-29)."
+        },
+        {
+          "head": [
+            "Fairness check (engineering heuristics)",
+            "Method and interpretation"
+          ],
+          "rows": [
+            [
+              "Group metrics",
+              "Compare accuracy, false rejection, missed errors, and service quality across relevant groups. Report denominators and uncertainty; avoid strong conclusions from small samples."
+            ],
+            [
+              "Controlled comparisons",
+              "Hold qualifications, facts, and task fixed; vary only the demographic attribute under examination. Repeat trials and have humans assess whether differences are task-relevant."
+            ],
+            [
+              "Verify mitigation",
+              "Inspect data, prompts, and evaluators; rerun affected-group and overall evaluations after changes. A high aggregate score does not establish fairness for each group."
+            ]
+          ]
+        },
+        {
+          "v": "Transparency: the Usage Policy requires consumer-facing chatbots, including external interactive agents, to disclose AI interaction at least at the start of every chat session. Heuristic: also show verifiable sources, evidence gaps, and capability limits; explain how to correct data, reach a human, and appeal, and record the outcome. Disclosure does not remove bias or replace the review in 5.3."
+        },
+        {
+          "title": "Decision rules (engineering heuristics)",
+          "v": [
+            "If the aggregate score is high but one group faces more false rejections → diagnose by group, because averages conceal differences.",
+            "If changing only a demographic attribute changes the result → review paired cases, because the attribute may be irrelevant.",
+            "If a user disputes a result → provide evidence and a human appeal, because explanatory prose does not establish fairness."
+          ]
+        },
+        {
+          "title": "Common traps (engineering heuristics)",
+          "v": [
+            "Declare fairness after removing demographic fields: other fields may retain associations.",
+            "Accept the model’s own bias assessment: the evaluator also needs calibration.",
+            "Offer only an AI disclaimer: users still lack correction and appeal paths."
+          ]
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Poor experience for a minority group",
+              "Group-level metrics"
+            ],
+            [
+              "Same qualifications, different outcomes",
+              "Paired comparisons"
+            ],
+            [
+              "Grader favors a style of expression",
+              "Calibrate rubric and judge"
+            ],
+            [
+              "Users unaware of AI involvement",
+              "Disclosure at session start"
+            ],
+            [
+              "No owner for disputed decisions",
+              "Human appeals and correction"
+            ]
+          ]
         }
       ]
     },
