@@ -5,10 +5,10 @@ Object.assign(CONTENT_EN.questions, {
     "o": [
       "Report confirmed correct cases over all requests, counting unscored cases as errors",
       "Report completion among requests that returned explanations, broken down by difficulty",
-      "Report accuracy on scored cases, unscored coverage, and results by difficulty",
+      "Report accuracy on scored cases, unscored-case ratio, and results by difficulty",
       "Measure explanation quality by format pass rate, listing pending cases separately"
     ],
-    "e": "Use scored cases as the accuracy denominator and report unscored coverage separately. Difficulty breakdowns expose gaps caused by a backlog of harder cases. See notes 4.1.",
+    "e": "Use scored cases as the accuracy denominator and report the proportion of unscored cases separately. Difficulty breakdowns expose gaps caused by a backlog of harder cases. See notes 4.1.",
     "w": {
       "0": "[Metric substitution] Unscored cases are not confirmed errors. This measures confirmed-correct coverage, not accuracy among scored cases.",
       "1": "[Metric substitution] Returning an explanation does not establish that its fee information is correct.",
@@ -18,7 +18,7 @@ Object.assign(CONTENT_EN.questions, {
   "q072": {
     "q": "A hospital adds filtering to its nonclinical information assistant. Harmful replies decrease, but ordinary visiting-hours questions are refused more often; the evaluation set already identifies answerable requests. Which metric captures the loss of legitimate service?",
     "o": [
-      "Assess the mistaken-refusal rate among answerable requests using the existing labels",
+      "Assess service loss by dividing mistaken refusals by the answerable-request count, using existing labels",
       "Assess refusals among all requests, breaking results down by topic",
       "Assess harmful replies among reviewed outputs and retain review records",
       "Assess repeat questions from refused users and compare the filter versions"
@@ -64,7 +64,7 @@ Object.assign(CONTENT_EN.questions, {
   "q075": {
     "q": "A university is preparing acceptance criteria for a dissertation-summary assistant whose current goal is simply to be more reliable. Departments use different task mixes and score denominators. What should the team do first to make the next evaluation reproducible and comparable?",
     "o": [
-      "Group departments by existing scores, recording ranks and versions",
+      "Compare existing total scores by department, recording rankings and versions",
       "Agree on population, scoring denominator, and targets; assess groups over a fixed window",
       "Expand departmental summary test sets while retaining their current scoring methods",
       "Pause comparisons across departments and report launch readiness from completed evaluation rounds"
@@ -185,9 +185,9 @@ Object.assign(CONTENT_EN.questions, {
     }
   },
   "q083": {
-    "q": "An A/B test of a bank reconciliation explainer is still within its planned observation window. The treatment is ahead, but its effect interval is wide; the planned sample size has not been reached and no stopping condition has fired. How should the team handle the result?",
+    "q": "An A/B test of a bank reconciliation explainer is still within its planned observation window. The treatment is ahead, but the confidence interval for the estimated effect is wide; the planned sample size has not been reached and no stopping condition has fired. How should the team handle the result?",
     "o": [
-      "Continue under the planned criteria, reporting the effect range as inconclusive",
+      "Continue as planned, reporting an inconclusive result with the effect estimate and confidence interval",
       "Stop the test and roll out the current leader, using the observed gain for acceptance",
       "Declare equivalence and retain the cheaper version per call",
       "Add reasoning steps to the treatment prompt and continue recording scores for the same test"
@@ -261,7 +261,7 @@ Object.assign(CONTENT_EN.questions, {
     }
   },
   "q088": {
-    "q": "A public research office investigates persistent reasoning failures in a scenario-analysis assistant. Reviewers have checked its evidence, assembled prompt, and grader; repeated comparisons on the same tasks and environment show that a higher-capability model meets the bar while the current model does not, within acceptable cost and latency. Which actions follow? Select 2.",
+    "q": "A public research office investigates persistent reasoning failures in a scenario-analysis assistant. Reviewers have checked its evidence, assembled prompt, and grader; repeated comparisons on the same tasks and environment show that a higher-capability model meets the bar while the current model does not. The tested higher-capability configuration also has acceptable cost and latency. Which actions follow? Select 2.",
     "o": [
       "Switch to the model configuration that passed the comparison, retaining the original for rollback",
       "Switch to a model one tier above the tested candidate and carry forward that candidate's acceptance result",
