@@ -1,6 +1,6 @@
 # 蓝图覆盖图
 
-生成时间：2026-09-29T14:42:32.734Z
+生成时间：2026-09-29T14:42:53.641Z
 
 由 scripts/gen-coverage.js 生成，勿手改。
 
@@ -73,6 +73,6 @@
 
 | Objective | 中文标题 | 官方英文原文 | 笔记状态 | 题号列表 | 题数 |
 | --- | --- | --- | --- | --- | --- |
-| 7.1 | 为团队配置 Claude 工具与环境（如 Claude Code） | Configure Claude tools and environments for teams (e.g., Claude Code) | 待写 | — | 0 |
-| 7.2 | 用 AI 工具改进开发流程 | Improve developer workflows using AI-assisted tooling | 待写 | — | 0 |
-| 7.3 | 支持调试与运维问题排查 | Support debugging and operational issue resolution | 待写 | — | 0 |
+| 7.1 | 为团队配置 Claude 工具与环境（如 Claude Code） | Configure Claude tools and environments for teams (e.g., Claude Code) | ✓ | q178, q179, q180, q181, q182 | 5 |
+| 7.2 | 用 AI 工具改进开发流程 | Improve developer workflows using AI-assisted tooling | ✓ | q183, q184, q185, q186 | 4 |
+| 7.3 | 支持调试与运维问题排查 | Support debugging and operational issue resolution | ✓ | q187, q188, q189, q190 | 4 |

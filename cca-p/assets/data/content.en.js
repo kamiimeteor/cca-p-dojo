@@ -2299,7 +2299,81 @@ const CONTENT_EN = {
       "title": "Configure Claude tools and environments for teams (e.g., Claude Code)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "Exam focus",
+          "v": "Share configuration at the appropriate scope; enforce access through permissions and document team conventions in CLAUDE.md. (official page, 2026-09-29)"
+        },
+        {
+          "head": [
+            "Settings scope",
+            "Location and purpose (documented)"
+          ],
+          "rows": [
+            [
+              "User",
+              "`~/.claude/settings.json`: personal preferences across projects. (official page, 2026-09-29)"
+            ],
+            [
+              "Project",
+              "`.claude/settings.json`: share with the team through version control. (official page, 2026-09-29)"
+            ],
+            [
+              "Local",
+              "`.claude/settings.local.json`: personal overrides for a project. (official page, 2026-09-29)"
+            ],
+            [
+              "Managed",
+              "Can be distributed as `managed-settings.json`; `/status` shows the active source. (official page, 2026-09-29)"
+            ]
+          ]
+        },
+        {
+          "v": "The general order is managed > command line > local > project > user. Some security keys honor stricter lower-scope values; environment-variable precedence is key-specific. (official page, 2026-09-29) Permission lists combine by default; matching deny, ask, and allow rules mean block, request confirmation, and pre-approve, in that order. A lower-scope deny can block a higher-scope allow. See 7.3 for the sandbox exception to a whole-tool Bash ask rule. (official page, 2026-09-29)"
+        },
+        {
+          "v": "CLAUDE.md supplies context rather than enforced permissions. Its scopes are organization, user (`~/.claude/CLAUDE.md`), project (`./CLAUDE.md` or `./.claude/CLAUDE.md`), and personal project instructions (`./CLAUDE.local.md`). Project instructions can be shared through version control. Ancestor files load at startup; subdirectory files load as Claude reads there. Instructions across scopes can conflict. (official page, 2026-09-29)"
+        },
+        {
+          "v": "MCP has three installation scopes: local is the default and private to the current project; user is private across projects. Both live in `~/.claude.json`. Project scope uses `.mcp.json` at the project root for version-controlled sharing. Interactive sessions normally prompt before using project servers; `-p`, SDK, and cloud sessions load them without that prompt. (official page, 2026-09-29)"
+        },
+        {
+          "title": "Decision rules (heuristics)",
+          "v": [
+            "If the whole team shares a setting → review and distribute project configuration, because personal settings do not reach teammates. (official page, 2026-09-29)",
+            "If an organization needs enforcement → use managed policy, because personal overrides can replace ordinary project settings. (official page, 2026-09-29)",
+            "If the task only needs information → grant only the read access the task needs, because confirmation prompts leave excess capabilities available. (official page, 2026-09-29)"
+          ]
+        },
+        {
+          "title": "Common traps (heuristics)",
+          "v": [
+            "Treating CLAUDE.md as access enforcement: see R.1, “Prompt as enforcement.” (official page, 2026-09-29)",
+            "Expecting a higher-scope allow to cancel a deny: permission rules have their own evaluation order. (official page, 2026-09-29)",
+            "Putting local MCP definitions in settings.local.json: this confuses two storage systems. (official page, 2026-09-29)"
+          ]
+        },
+        {
+          "head": [
+            "Question signal (heuristics)",
+            "Likely answer"
+          ],
+          "rows": [
+            [
+              "Shared team conventions",
+              "Project CLAUDE.md. (official page, 2026-09-29)"
+            ],
+            [
+              "Personal preferences for one project",
+              "Local settings. (official page, 2026-09-29)"
+            ],
+            [
+              "Organization policy",
+              "Managed settings. (official page, 2026-09-29)"
+            ],
+            [
+              "Shared external tool connections",
+              "Project `.mcp.json`. (official page, 2026-09-29)"
+            ]
+          ]
         }
       ]
     },
@@ -2307,7 +2381,78 @@ const CONTENT_EN = {
       "title": "Improve developer workflows using AI-assisted tooling",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "Exam focus",
+          "v": "Separate exploration, planning, implementation, and verification; choose tools by whether checks are deterministic and context belongs in a separate task."
+        },
+        {
+          "head": [
+            "Workflow (heuristics)",
+            "Execution and acceptance"
+          ],
+          "rows": [
+            [
+              "Explore → plan → implement → verify",
+              "Read relevant code, agree on an approach, then edit and check test results. Small, clear changes can skip planning. This is a teaching adaptation: the official four phases end with commit, with verification during implementation. (official page, 2026-09-29)"
+            ],
+            [
+              "Test-driven development",
+              "Write a failing test that reproduces the defect, fix the implementation, and rerun it. Check that assertions cover the intended behavior. (official page, 2026-09-29)"
+            ],
+            [
+              "Code review",
+              "Ask Claude to inspect the diff and risks; a person reviews the evidence before merging. See 5.3 for human validation strategy. (official page, 2026-09-29)"
+            ]
+          ]
+        },
+        {
+          "v": "A command hook (`type: command`) runs a script for deterministic checks. A `PostToolUse` hook with `matcher: Edit|Write` can run a formatter after edits. (official page, 2026-09-29) To block execution, use `PreToolUse` with `hookSpecificOutput.permissionDecision: deny`. A post-action hook cannot undo an action that already ran. (official page, 2026-09-29)"
+        },
+        {
+          "v": "A subagent can handle searches or log analysis in its own context and return a summary, keeping bulky intermediate material out of the main conversation. It normally starts fresh; a fork inherits the conversation. Context isolation does not establish a tool-access boundary: configure access separately. (official page, 2026-09-29)"
+        },
+        {
+          "v": "CI can use `claude -p` for non-interactive execution and `--output-format json` for structured results. `--allowedTools` pre-approves tools; it is not a complete tool allowlist. A normal `-p` run can still load project hooks and MCP servers without a trust dialog. (official page, 2026-09-29) Custom applications can also use the Python or TypeScript Agent SDK. (official page, 2026-09-29)"
+        },
+        {
+          "title": "Decision rules (heuristics)",
+          "v": [
+            "If every edit needs a fixed check → use a command hook, because the script runs without relying on the model to choose to run it. (official page, 2026-09-29)",
+            "If research crowds the main context → use a regular subagent, because intermediate work can stay in separate context. (official page, 2026-09-29)",
+            "If CI runs unattended → explicitly limit tools and credentials, because non-interactive execution is not isolation. (official page, 2026-09-29)",
+            "If a change is ready to merge or release → have a person review the diff and verification evidence, because successful generation does not prove correctness. (official page, 2026-09-29)"
+          ]
+        },
+        {
+          "title": "Common traps (heuristics)",
+          "v": [
+            "Equating passing tests with meeting the requirement: incorrect assertions can pass.",
+            "Using a post-action hook in place of a pre-action gate: see R.1, “Audit as prevention.” (official page, 2026-09-29)",
+            "Trusting repository hooks without review: command hooks run with the user's full permissions. Review the scripts first. (official page, 2026-09-29)"
+          ]
+        },
+        {
+          "head": [
+            "Question signal (heuristics)",
+            "Likely answer"
+          ],
+          "rows": [
+            [
+              "Consistent formatting",
+              "Post-edit hook. (official page, 2026-09-29)"
+            ],
+            [
+              "Research consumes the context",
+              "Regular subagent. (official page, 2026-09-29)"
+            ],
+            [
+              "Batch work in CI",
+              "`-p` or SDK with explicit authorization. (official page, 2026-09-29)"
+            ],
+            [
+              "High-impact change ready to merge",
+              "Human review; see 5.3. (official page, 2026-09-29)"
+            ]
+          ]
         }
       ]
     },
@@ -2315,7 +2460,82 @@ const CONTENT_EN = {
       "title": "Support debugging and operational issue resolution",
       "blocks": [
         {
-          "v": "(TODO)"
+          "title": "Exam focus",
+          "v": "Use AI to organize evidence, reproduce failures, and verify fixes while people control production actions. This section covers troubleshooting with tools; see 4.4 for diagnosing LLM systems and 4.6 for monitoring design."
+        },
+        {
+          "v": "The debugging guide recommends supplying the error, reproduction command, stack trace, reproduction steps, and whether the failure is intermittent or consistent. (official page, 2026-09-29) `claude -p` can analyze logs supplied through stdin. (official page, 2026-09-29) Heuristic: redact sensitive data, bound the time window, include versions and recent changes, and ask for separate observations, hypotheses, and checks."
+        },
+        {
+          "head": [
+            "Troubleshooting stage (heuristics)",
+            "AI task and human acceptance"
+          ],
+          "rows": [
+            [
+              "Read logs",
+              "Correlate errors, request identifiers, and timestamps; cite original lines and inspect their surrounding context."
+            ],
+            [
+              "Reproduce",
+              "Build a minimal reproduction or failing test in an isolated environment; confirm that it reproduces the same symptom."
+            ],
+            [
+              "Locate the cause",
+              "List supporting and conflicting evidence for each hypothesis; test one variable at a time without treating correlation as the cause."
+            ],
+            [
+              "Verify",
+              "Apply the fix outside production first, rerun the reproduction and regression checks, and have the operator confirm recovery signals and rollback conditions."
+            ]
+          ]
+        },
+        {
+          "v": "Production boundary (heuristic): start with read-only log copies or credentials and remove unnecessary write access. Necessary writes require human approval of the command, target, impact, and rollback plan. See 5.3 for approval policy and 7.1 for permission mechanisms. The documentation states that Claude Code enforces permissions, CLAUDE.md does not change authorization, and sandboxing adds OS-level restrictions. (official page, 2026-09-29)"
+        },
+        {
+          "v": "Approval exception (documented): with sandboxing enabled and `autoAllowBashIfSandboxed` at its default of true, a whole-tool `Bash` ask rule does not guarantee a prompt during ordinary execution. Plan mode does not apply that substitution. Content-scoped ask rules such as `Bash(git push *)` still prompt, and explicit deny rules still apply. `rm` or `rmdir` commands targeting a critical path still go through the regular permission flow. Commands that do not run sandboxed, such as excluded commands, still honor the whole-tool `Bash` ask rule. (official page, 2026-09-29)"
+        },
+        {
+          "title": "Decision rules (heuristics)",
+          "v": [
+            "If only an error summary is available → collect original logs and reproduction steps, because the summary cannot establish the cause.",
+            "If the failure is intermittent → correlate times, requests, and changes, because one error may omit preceding events.",
+            "If AI proposes a production write → prepare a change plan for human approval, because diagnostic access does not authorize execution.",
+            "If the error disappears after a fix → rerun reproduction and regression checks, because one successful run does not establish stable recovery."
+          ]
+        },
+        {
+          "title": "Common traps (heuristics)",
+          "v": [
+            "Recording the model's explanation as the established cause: retain verifiable evidence and unresolved hypotheses.",
+            "Keeping administrator credentials and adding only confirmation: see R.1, “Guarding excess capability.”",
+            "Replacing pre-execution approval with an audit log: see R.1, “Audit as prevention.”"
+          ]
+        },
+        {
+          "head": [
+            "Question signal (heuristics)",
+            "Likely answer"
+          ],
+          "rows": [
+            [
+              "Many logs, unclear cause",
+              "Redact, then correlate evidence and hypotheses."
+            ],
+            [
+              "Repeated instances of the same error",
+              "Minimal reproduction and a failing test."
+            ],
+            [
+              "Production restart, configuration change, or rollback",
+              "Execute within authorization after human approval."
+            ],
+            [
+              "Hallucinations, prompt failures, or metric alerts",
+              "See 4.4 for diagnosis and 4.6 for monitoring."
+            ]
+          ]
         }
       ]
     },

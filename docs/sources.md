@@ -219,3 +219,31 @@ D4 查阅日期：2026-09-29。以下指标口径、实验设计、诊断流程�
 - [https://www.anthropic.com/legal/aup](https://www.anthropic.com/legal/aup)：核实面向消费者的聊天机器人与外部交互 agent 至少每次会话开始披露 AI 身份；高风险披露和审核参见 5.3。
 - [https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/](https://airc.nist.gov/airmf-resources/airmf/3-sec-characteristics/)：核实透明、解释、局限与公平性治理；展示来源、申诉及更正入口为工程经验法则。
 - [https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实判分校准与复核；分群指标、样本量和配对回归的具体安排为本文经验法则。
+## 7.1
+
+D7 查阅日期：2026-09-29。Claude Code 配置与行为以 code.claude.com 官方文档为准；正文以日期标注出处，完整 URL 见本文件。决策规则、题目信号、生产审批方案为经验法则。未引入模型型号、价格、thinking 或 effort 配置。
+
+- [Settings files and precedence](https://code.claude.com/docs/en/settings)：核实用户、项目、本地、托管作用域与文件位置，加入命令行后的完整五层优先级；保留较低层严格安全值及环境变量逐键判断的例外，不把所有键概括为整文件覆盖。
+- [Configure permissions](https://code.claude.com/docs/en/permissions)：核实权限列表默认合并，deny → ask → allow 的判定顺序、跨层 deny 的效力；未声称所有场景都合并，allowManagedPermissionRulesOnly 等托管限制另见官方页面。7.3 补充整工具 Bash ask 的沙箱例外。
+- [How Claude remembers your project](https://code.claude.com/docs/en/memory)：核实组织、用户、项目、个人四层 CLAUDE.md 类文件、版本共享、祖先启动加载与子目录按需加载；上下文指令不强制授权，冲突指令不等于 settings 覆盖。
+- [Connect Claude Code to tools via MCP](https://code.claude.com/docs/en/mcp)：核实三种安装作用域、local 默认、local/user 的 ~/.claude.json 与 project 的 .mcp.json；交互通常提示批准，-p/SDK/云会话不显示该提示。保留“通常”，因为页面还列出 bypassPermissions 加 skipDangerousModePermissionPrompt 的跳过条件。未扩写服务器来源去重优先级。
+- [Deploy managed settings](https://code.claude.com/docs/en/managed-settings)：核实可统一分发 managed-settings.json 并用 /status 检查来源；这是文档提供的一种分发方式，不冒充全部托管机制枚举。
+
+## 7.2
+
+- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)：核实探索后计划再实现、明确小改可跳过计划、复现缺陷的失败测试、验证证据。笔记“探索 → 计划 → 实现 → 验证”为教学流程；官方四阶段为 Explore / Plan / Implement / Commit，验证位于实现阶段，正文已明确区分。
+- [Common workflows](https://code.claude.com/docs/en/common-workflows)：核实检查生成的 PR、识别风险、测试目标行为与边界；合并/发布前人工门槛及断言复核为本文经验法则，5.3 是主题交叉引用。
+- [Automate actions with hooks](https://code.claude.com/docs/en/hooks-guide)：核实命令型 hook 调用脚本，PostToolUse 的 Edit|Write matcher 可触发格式化，以及事后 hook 无法撤销既有动作；没有把 prompt/agent hooks 也称为确定性脚本。
+- [Hooks reference](https://code.claude.com/docs/en/hooks)：核实 PreToolUse 的 hookSpecificOutput.permissionDecision: deny 可在工具运行前阻止调用，命令型 hooks 以用户完整权限执行。只讲 deny 这一用法，不把它冒充全部 decision 值清单。
+- [Create custom subagents](https://code.claude.com/docs/en/sub-agents)：核实独立上下文与结果摘要、普通 subagent 新上下文、fork 继承对话的例外；工具访问另配，未声称上下文隔离就是安全沙箱。
+- [Run Claude Code programmatically](https://code.claude.com/docs/en/headless)：核实 -p、--output-format json、--allowedTools 的自动批准语义；普通 -p 仍加载项目 hooks/MCP 且没有工作区信任或服务器批准提示。无人值守权限与凭证边界为本文经验法则。
+- [CLI reference](https://code.claude.com/docs/en/cli-reference)：核实 `--allowedTools` 只自动批准匹配的工具调用，不构成完整工具白名单；限制可用工具应使用 `--tools`。
+- [Agent SDK overview](https://code.claude.com/docs/en/agent-sdk/overview)：仅核实可在 Python / TypeScript 程序中使用 Agent SDK；未把 CLI 参数直接当作 SDK 字段。
+
+## 7.3
+
+- [Common workflows](https://code.claude.com/docs/en/common-workflows)：核实调试输入包括报错、复现命令、堆栈、复现步骤、偶发/稳定信息；证据表、一次一变量、回滚条件均为本文排障经验法则。
+- [Run Claude Code programmatically](https://code.claude.com/docs/en/headless)：核实 stdin 管道输入日志并请求构建失败原因解释；没有声称模型解释已证实根因。
+- [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)：核实失败测试复现与测试输出验证，支持本文非生产复现和回归的教学流程。
+- [Configure permissions](https://code.claude.com/docs/en/permissions)：核实执行端强制权限、CLAUDE.md 不改变授权、沙箱的操作系统边界；核实启用沙箱且 autoAllowBashIfSandboxed 默认为 true 时整工具 Bash ask 的替代机制、Plan 模式例外、内容限定 ask 与显式 deny 仍生效；针对关键路径的 `rm` / `rmdir` 仍走常规权限流程，不在沙箱内运行的命令（如 excluded commands）照常遵守整工具 `Bash` ask 规则。
+- [Security](https://code.claude.com/docs/en/security)：核实手动模式的只读起点、显式授权和审查建议；生产只读凭证、脱敏、必要写操作人工审批与回滚方案为本文经验法则，不声称 Claude Code 自动识别生产环境或自带组织审批流程。4.4、4.6 与 5.3 的分工按本项目章节定义。
