@@ -13,7 +13,7 @@ D1 的设计表、决策规则与题目信号是原创教学归纳；其中标�
 - [https://www.anthropic.com/engineering/building-effective-agents](https://www.anthropic.com/engineering/building-effective-agents)：核实先采用最简单可行架构，以及单次调用、检索和示例通常已足够；不把建议写成强制流程。
 - [https://platform.claude.com/docs/en/test-and-evaluate/develop-tests](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实具体、可测、可实现、与业务相关的成功标准，代表性输入、边界样本及多维度评估。
 - [https://platform.claude.com/docs/en/about-claude/models/choosing-a-model](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model)：核实效率优先与能力优先两种模型选型起点；“架构简单”不推导为“总用最小模型”。
-- [https://platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview)：核实当前主比较表为 Fable 5.1、Opus 5.5、Sonnet 5、Haiku 4.5；D1 不复述模型配置或 thinking 参数，避免越入 D2。
+- [https://platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview)（2026-09-29 重新查阅）：核实当前主比较表为 Fable 5.1、Opus 5.5、Sonnet 5.5、Haiku 4.5，Sonnet 5 已列入旧型号（legacy，仍可用）；D1 不复述模型配置或 thinking 参数，避免越入 D2。
 - [https://www.anthropic.com/engineering/how-we-contain-claude](https://www.anthropic.com/engineering/how-we-contain-claude)：核实模型指令与执行环境权限的边界；数据与人工复核的具体方案标为经验法则。
 
 ## 1.2
@@ -52,7 +52,7 @@ D1 的设计表、决策规则与题目信号是原创教学归纳；其中标�
 
 ## D2 核对口径
 
-D2 写作与查阅日期：2026-09-29。下列 URL 均在当日实际查阅；每条注明核实范围。模型、价格、窗口与 thinking/effort 的来源和日期也附在笔记对应段落或表头，表头出处适用于其每一行。当前主表使用 Sonnet 5.5；其他域较早日期的 Sonnet 5 记录是不同型号，不作为新型号的配置依据。5.1 尚待写，本次仅添加专题导航。
+D2 写作与查阅日期：2026-09-29。下列 URL 均在当日实际查阅；每条注明核实范围。模型、价格、窗口与 thinking/effort 的来源和日期也附在笔记对应段落或表头，表头出处适用于其每一行。当前主表使用 Sonnet 5.5；Sonnet 5 是不同的旧型号，不作为新型号的配置依据（1.x、3.3 已于 2026-09-29 统一到 Sonnet 5.5）。5.1 尚待写，本次仅添加专题导航。
 
 ## 2.1
 
@@ -69,7 +69,7 @@ D2 写作与查阅日期：2026-09-29。下列 URL 均在当日实际查阅；�
 ## 2.3
 
 - [prompt](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)（查阅：2026-09-29）：核实 few-shot 的相关、多样（含边界）、结构化三项建议，3–5 示例为建议；thinking 下偏好一般推理指引的 often（往往）语气、示例可配合 thinking、手动 CoT 的关闭 thinking 前提。技术适用表为经验法则。
-- [thinking](https://platform.claude.com/docs/en/build-with-claude/thinking)（查阅：2026-09-29）、[models](https://platform.claude.com/docs/en/about-claude/models/overview)（查阅：2026-09-29）：核实 Fable 5.1 / Opus 5.5 常开、Sonnet 5.5 的 between_tools 与 low/medium/high 条件、不接受其他 thinking 字段、disabled 返回 400、Haiku 4.5 手动 extended thinking；核实默认隐藏与摘要展示。3.3 的旧日期 Sonnet 5 记录不能套到新型号。
+- [thinking](https://platform.claude.com/docs/en/build-with-claude/thinking)（查阅：2026-09-29）、[models](https://platform.claude.com/docs/en/about-claude/models/overview)（查阅：2026-09-29）：核实 Fable 5.1 / Opus 5.5 常开、Sonnet 5.5 的 between_tools 与 low/medium/high 条件、不接受其他 thinking 字段、disabled 返回 400、Haiku 4.5 手动 extended thinking；核实默认隐藏与摘要展示。3.3 已于 2026-09-29 按同一页面改为 Sonnet 5.5，与本节一致。
 - [agents](https://www.anthropic.com/engineering/building-effective-agents)（查阅：2026-09-29）：核实 prompt chaining 跨调用传递结果、可加程序检查门、固定可分解任务与延迟取舍；架构展开参见 1.3。
 
 ## 2.4
@@ -109,8 +109,8 @@ D2 写作与查阅日期：2026-09-29。下列 URL 均在当日实际查阅；�
 - [https://platform.claude.com/docs/en/build-with-claude/effort](https://platform.claude.com/docs/en/build-with-claude/effort)：核实 output_config.effort 是质量、延迟与成本取舍的主要控制；支持的级别依模型而异。
 - [https://platform.claude.com/docs/en/build-with-claude/adaptive-thinking](https://platform.claude.com/docs/en/build-with-claude/adaptive-thinking)：该官方入口重定向至 thinking-steering-and-cost；核实 adaptive thinking 由模型决定推理，effort 是软指导。
 - [https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost](https://platform.claude.com/docs/en/build-with-claude/thinking-steering-and-cost)：核实 effort 不保证固定 token 数量；按任务评估推理投入。
-- [https://platform.claude.com/docs/en/build-with-claude/thinking](https://platform.claude.com/docs/en/build-with-claude/thinking)：核实 Opus 5.5、Fable 5.1 不可关闭 thinking，Sonnet 5 可关闭，以及 Opus 4.7 的 adaptive 配置。
-- [https://platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview)：核实模型能力、速度与成本的选型维度。
+- [https://platform.claude.com/docs/en/build-with-claude/thinking](https://platform.claude.com/docs/en/build-with-claude/thinking)（2026-09-29 重新查阅）：按页面的逐模型配置表与正文核实 Opus 5.5、Fable 5.1 不可关闭 thinking；Sonnet 5.5 默认 adaptive thinking，`disabled` 返回 400，最低档 `between_tools` 仅在 effort `high` 及以下（low / medium / high）接受，关闭前置推理，仍返回工具间进度更新；Opus 4.7 默认关闭、设置 `adaptive` 才启用；手动 `enabled` + `budget_tokens` 在 Opus / Sonnet 4.6 为弃用状态、Opus 4.7 起返回 400，Haiku 4.5 仅支持 extended thinking。
+- [https://platform.claude.com/docs/en/models/overview](https://platform.claude.com/docs/en/models/overview)（2026-09-29 重新查阅）：核实模型能力、速度与成本的选型维度；当前主表为 Fable 5.1、Opus 5.5、Sonnet 5.5、Haiku 4.5，thinking 行分别为 Adaptive（常开）、Adaptive（常开）、Adaptive、Extended。
 - [https://platform.claude.com/docs/en/build-with-claude/extended-thinking](https://platform.claude.com/docs/en/build-with-claude/extended-thinking)：核实手动 budget_tokens 模式在 4.6 的弃用、4.7 起的限制，以及 Haiku 4.5 仅支持 extended thinking。
 - [https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use](https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use)：核实多个工具调用的执行顺序由应用控制，独立读取可并行；依赖或共享写状态可能更适合串行，而非无条件强制。
 - [https://platform.claude.com/docs/en/build-with-claude/streaming](https://platform.claude.com/docs/en/build-with-claude/streaming)：核实Messages API 流式增量交付；不将首响应等同任务完成。
@@ -164,7 +164,7 @@ D2 写作与查阅日期：2026-09-29。下列 URL 均在当日实际查阅；�
 
 ## 4.1
 
-D4 查阅日期：2026-09-29。以下指标口径、实验设计、诊断流程、监控阈值及题目信号为原创教学归纳，按正文标注区分官方机制与经验法则；不是 Anthropic 统一要求。D4 不新增当前型号表：当天官方选型页已列 Sonnet 5.5，任务书及 3.3 的 Sonnet 5 是先前记录；不在本轮改动范围外更新 D3。
+D4 查阅日期：2026-09-29。以下指标口径、实验设计、诊断流程、监控阈值及题目信号为原创教学归纳，按正文标注区分官方机制与经验法则；不是 Anthropic 统一要求。D4 不新增当前型号表：当天官方选型页已列 Sonnet 5.5；3.3 已于 2026-09-29 同步为 Sonnet 5.5。
 
 - [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实具体、可测、可实现、相关四项成功标准与多维评估；SMART 的时间限定、各指标分母和成本公式是本文度量约定，非该页的第五项官方要求。
 - [Reducing latency](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency)：核实 TTFT 的起止点及它与完整输出的区别；任务总时长另计工具和重试，百分位、窗口按本文约定。
@@ -174,7 +174,7 @@ D4 查阅日期：2026-09-29。以下指标口径、实验设计、诊断流程�
 ## 4.2
 
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实代码 / 模型 / 人工三类判分、outcome 与 trajectory、重复 trial、环境隔离、专家校准、线上线下互补；保留“通常更适合评产物”的条件语气。2026-01-09 博客的 20–50 个任务是早期评估起点建议，不是 A/B 显著性样本量或保证。
-- [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实精确匹配、任务代表性、边界输入、清晰 rubric、先验证 judge 可靠性再扩展；留出测试集和对答案顺序 / 长度的偏差检查为本文评估设计。
+- [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)（2026-09-29 重新查阅原始页面）：核实精确匹配、任务代表性（贴合真实任务分布）与边界输入；「Grade your evaluations」小节的 LLM-based grading 条目写明先测试可靠性再扩展（先验证 judge 可靠性再扩展），其后「Tips for LLM-based grading」写明使用详细、清晰的 rubric。留出测试集和对答案顺序 / 长度的偏差检查为本文评估设计。
 - [Mitigate jailbreaks and prompt injections](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)：核实上线前对抗注入测试；常见、边界、对抗三类是本文的数据集分组，不冒充官方穷尽分类。
 
 ## 4.3

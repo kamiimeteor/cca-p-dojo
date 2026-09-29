@@ -827,7 +827,15 @@ function bindMark(root) {
 /* ================================================================
    VIEW: 刷题
    ================================================================ */
-const PRACTICE = { list: [], i: 0, results: [], label: '' };
+/* key：建这一轮题单时的 hash；answered：本轮最近一次作答 { i, pick }；label 是函数，换语言时重新取文案 */
+const PRACTICE = { list: [], i: 0, results: [], label: () => '', key: '', answered: null };
+const practiceLabel = (P) => (typeof P.label === 'function' ? P.label() : String(P.label || ''));
+
+/** 切换语言时能否原地重绘刷题页：还停在建题单时的那个 hash，且这一轮题单还在。
+ *  不能重跑 router —— routes.practice 会重新洗牌，未作答的当前题就被换成了别的题。 */
+function canRepaintPractice(P, hash) {
+  return P.list.length > 0 && !!P.key && P.key === hash;
+}
 const isWeak = (q) => { const st = S.qstats[q.id]; return !!st?.seen && (st.last === false || st.ok / st.seen < 0.7); };
 
 /** Domain 练习续做：已做题排在进度条前面，当前题指向第一道未做题；全部做完后开启新一轮。 */
@@ -847,26 +855,26 @@ function buildPracticeResume(list, qstats) {
 routes.practice = (rest) => {
   if (!rest.length) return practiceMenu();
   const [mode, arg] = rest;
-  let list = [], label = '', resume = false;
+  let list = [], label = () => '', resume = false;
 
   if (mode === 'go') return practiceRun();
   else if (mode === 'dom')  { if (!VALID_DOM.has(arg)) return go('/practice');
-                              list = QUESTIONS.filter((q) => q.d === arg); label = domView(domOf(arg)).title;
+                              list = QUESTIONS.filter((q) => q.d === arg); label = () => domView(domOf(arg)).title;
                               resume = true; }
   else if (mode === 'sec')  { const id = safeDecode(arg || '');
                               if (!VALID_SEC.has(id)) return go('/practice');
-                              list = QUESTIONS.filter((q) => q.s === id); label = `${id} ${secTitle(id)}`; }
-  else if (mode === 'all')  { list = [...QUESTIONS]; label = t('practice_all'); }
-  else if (mode === 'new')  { list = QUESTIONS.filter((q) => !S.qstats[q.id]?.seen); label = t('practice_new'); }
-  else if (mode === 'weak') { list = QUESTIONS.filter(isWeak); label = t('practice_weak'); }
-  else if (mode === 'mark') { list = QUESTIONS.filter((q) => S.marks.includes(q.id)); label = t('practice_marks'); }
+                              list = QUESTIONS.filter((q) => q.s === id); label = () => `${id} ${secTitle(id)}`; }
+  else if (mode === 'all')  { list = [...QUESTIONS]; label = () => t('practice_all'); }
+  else if (mode === 'new')  { list = QUESTIONS.filter((q) => !S.qstats[q.id]?.seen); label = () => t('practice_new'); }
+  else if (mode === 'weak') { list = QUESTIONS.filter(isWeak); label = () => t('practice_weak'); }
+  else if (mode === 'mark') { list = QUESTIONS.filter((q) => S.marks.includes(q.id)); label = () => t('practice_marks'); }
   /* 进阶训练：走各自的引擎，不经过 practiceRun，常规刷题流程完全不受影响 */
   else if (mode === 'blind')  return blindStart();
   else if (mode === 'degree') return degreeStart();
   else return go('/practice');
 
   if (!list.length) {
-    $('#app').innerHTML = `<h1>${esc(label)}</h1>
+    $('#app').innerHTML = `<h1>${esc(label())}</h1>
       <div class="empty"><div class="em">◇</div>${esc(t('practice_empty'))}
         <div class="row" style="justify-content:center;margin-top:16px">
           <a class="btn" href="#/practice">${esc(t('practice_back'))}</a></div></div>`;
@@ -874,6 +882,7 @@ routes.practice = (rest) => {
   }
   const start = resume ? buildPracticeResume(list, S.qstats) : { list: shuffle(list), i: 0, results: [] };
   PRACTICE.list = start.list; PRACTICE.i = start.i; PRACTICE.results = start.results; PRACTICE.label = label;
+  PRACTICE.key = location.hash; PRACTICE.answered = null;
   practiceRun();
 };
 
@@ -938,12 +947,21 @@ function practiceMenu() {
    进阶训练 A：先答后看
    题干先行 → 逼出自己的判断依据 → 再展开选项 → 对照
    ================================================================ */
-const BLIND = { list: [], i: 0, results: [], note: '', guess: '' };
+/* key / answered 同 PRACTICE；stage 记录当前在第几步，换语言时回到同一步；
+   note / guess 在第一步随输入实时保存，换语言重绘后填回去 */
+const BLIND = { list: [], i: 0, results: [], note: '', guess: '', key: '', stage: 1, answered: null };
 
 function blindStart() {
   BLIND.list = shuffle([...QUESTIONS]);
   BLIND.i = 0; BLIND.results = [];
+  BLIND.key = location.hash; BLIND.answered = null;
   blindStage1();
+}
+
+/** 换语言时原地重绘：停在哪一步就重绘哪一步，已写的依据和已作答状态都保留 */
+function blindRepaint() {
+  if (BLIND.i >= BLIND.list.length) return blindDone();
+  return BLIND.stage === 2 ? blindStage2() : blindStage1(true);
 }
 
 function blindShell(inner) {
@@ -962,11 +980,12 @@ function blindShell(inner) {
     </div>`;
 }
 
-function blindStage1() {
+function blindStage1(repaint = false) {
   const B = BLIND;
   if (B.i >= B.list.length) return blindDone();
   const q = qView(B.list[B.i]);
-  B.note = ''; B.guess = '';
+  B.stage = 1;
+  if (!repaint) { B.note = ''; B.guess = ''; }
 
   const secOpts = NOTES.flatMap((d) => d.sections)
     .filter((s) => QUESTIONS.some((x) => x.s === s.id))
@@ -985,9 +1004,16 @@ function blindStage1() {
       <button class="btn primary" id="revealBtn">${esc(t('blind_reveal'))}</button>
     </div>`);
 
+  // 边写边存：换语言重绘时把已写的依据和猜的小节填回去
+  const noteEl = $('#blindNote'), guessEl = $('#blindGuess');
+  noteEl.value = B.note;
+  guessEl.value = B.guess;
+  noteEl.oninput = () => { B.note = noteEl.value; };
+  guessEl.onchange = () => { B.guess = guessEl.value; };
+
   $('#revealBtn').onclick = () => {
-    B.note = $('#blindNote').value.trim();
-    B.guess = $('#blindGuess').value;
+    B.note = noteEl.value.trim();
+    B.guess = guessEl.value;
     blindStage2();
   };
 }
@@ -995,6 +1021,7 @@ function blindStage1() {
 function blindStage2() {
   const B = BLIND;
   const q = qView(B.list[B.i]);
+  B.stage = 2;
 
   blindShell(`
     <div class="stage-tag">${esc(t('blind_stage2'))}</div>
@@ -1002,11 +1029,15 @@ function blindStage2() {
 
   bindMark($('#app'));
 
-  const finish = (pick) => {
+  // fresh=false 是换语言后的重绘：只恢复判分界面，不重复记分
+  const showVerdict = (pick, fresh) => {
     const ok = revealAnswer(q, pick, $('#app'));
-    record(q.id, ok);
-    B.results[B.i] = ok;
-    updateWrongPill();
+    if (fresh) {
+      record(q.id, ok);
+      B.results[B.i] = ok;
+      B.answered = { i: B.i, pick };
+      updateWrongPill();
+    }
     $$('.progress-strip i')[B.i].className = ok ? 'ok' : 'no';
 
     // 把作答前写下的依据摆到解析旁边，供自我对照
@@ -1026,6 +1057,7 @@ function blindStage2() {
     n.onclick = () => { B.i++; blindStage1(); };
     n.focus();
   };
+  const finish = (pick) => showVerdict(pick, true);
 
   if (isMulti(q)) {
     const need = pickCount(q);
@@ -1043,6 +1075,7 @@ function blindStage2() {
   } else {
     $$('.opt').forEach((b) => { b.onclick = () => finish(+b.dataset.i); });
   }
+  if (B.answered && B.answered.i === B.i) showVerdict(B.answered.pick, false);
 }
 
 function blindDone() {
@@ -1068,7 +1101,8 @@ function blindDone() {
    进阶训练 B：程度判断
    只留正确项 + 一个「有 why-wrong 解析」的强干扰项，二选一
    ================================================================ */
-const DEGREE = { list: [], i: 0, results: [] };
+/* key / answered 同 PRACTICE；pairFor 记下当前题抽到的干扰项和两项顺序，换语言重绘时沿用，不重新抽 */
+const DEGREE = { list: [], i: 0, results: [], key: '', answered: null, pairFor: null };
 
 /** 能进这个模式的题：单选、且至少有一个被标注过为什么错的干扰项 */
 const degreePool = () => QUESTIONS.filter((q) =>
@@ -1085,6 +1119,7 @@ function degreeStart() {
   }
   DEGREE.list = shuffle(pool);
   DEGREE.i = 0; DEGREE.results = [];
+  DEGREE.key = location.hash; DEGREE.answered = null; DEGREE.pairFor = null;
   degreeRun();
 }
 
@@ -1102,8 +1137,11 @@ function degreeRun() {
   // 优先用逐题标注的 near —— 那个「说得通但不相称」的干扰项。
   // 这个模式练的是程度判断，随机挑到一个一眼假的选项，题就白出了。
   // near 取自 raw（题库原始对象）：它是选项下标，与语言无关。
-  const foil = foils.includes(raw.near) ? raw.near : foils[(Math.random() * foils.length) | 0];
-  const pair = shuffle([q.a, foil]);
+  if (!D.pairFor || D.pairFor.i !== D.i) {
+    const pick = foils.includes(raw.near) ? raw.near : foils[(Math.random() * foils.length) | 0];
+    D.pairFor = { i: D.i, foil: pick, pair: shuffle([q.a, pick]) };
+  }
+  const { foil, pair } = D.pairFor;
 
   $('#app').innerHTML = `
     <div class="quiz">
@@ -1128,39 +1166,42 @@ function degreeRun() {
       <div id="verdict"></div>
     </div>`;
 
-  $$('.opt').forEach((b) => {
-    b.onclick = () => {
-      const pickIdx = +b.dataset.i;
-      const ok = pickIdx === q.a;
-      $$('.opt').forEach((x) => {
-        const i = +x.dataset.i;
-        x.disabled = true;
-        x.classList.add(i === q.a ? 'right' : 'wrong');
-      });
+  // fresh=false 是换语言后的重绘：只恢复判分界面，不重复记分
+  const showVerdict = (pickIdx, fresh) => {
+    const ok = pickIdx === q.a;
+    $$('.opt').forEach((x) => {
+      const i = +x.dataset.i;
+      x.disabled = true;
+      x.classList.add(i === q.a ? 'right' : 'wrong');
+    });
+    if (fresh) {
       record(q.id, ok);
       D.results[D.i] = ok;
+      D.answered = { i: D.i, pick: pickIdx };
       updateWrongPill();
-      $$('.progress-strip i')[D.i].className = ok ? 'ok' : 'no';
+    }
+    $$('.progress-strip i')[D.i].className = ok ? 'ok' : 'no';
 
-      const foilWhy = wSrc[foil];
-      $('#verdict').innerHTML = `
-        <div class="verdict ${ok ? 'good' : 'bad'}">
-          <div class="vh">${esc(ok ? t('q_right') : t('q_wrong', LTR[pair.indexOf(q.a)]))}</div>
-          <p>${md(q.e)}</p>
-          ${foilWhy ? `<div class="box warn" style="margin:12px 0 0"><b class="bt">${esc(t('degree_why'))}</b>
-            <p style="margin:0;font-size:13.5px">${md(foilWhy)}</p></div>` : ''}
-          <div class="row" style="margin-top:12px">
-            <a class="btn sm" href="#/notes/${encodeURIComponent(q.s)}">${
-              esc(t('q_back_to_note', q.s, secTitle(q.s)))}</a>
-            <button class="btn sm primary" id="nextQ">${
-              esc(D.i + 1 >= D.list.length ? t('q_see_result') : t('q_next'))}</button>
-          </div>
-        </div>`;
-      const n = $('#nextQ');
-      n.onclick = () => { D.i++; degreeRun(); };
-      n.focus();
-    };
-  });
+    const foilWhy = wSrc[foil];
+    $('#verdict').innerHTML = `
+      <div class="verdict ${ok ? 'good' : 'bad'}">
+        <div class="vh">${esc(ok ? t('q_right') : t('q_wrong', LTR[pair.indexOf(q.a)]))}</div>
+        <p>${md(q.e)}</p>
+        ${foilWhy ? `<div class="box warn" style="margin:12px 0 0"><b class="bt">${esc(t('degree_why'))}</b>
+          <p style="margin:0;font-size:13.5px">${md(foilWhy)}</p></div>` : ''}
+        <div class="row" style="margin-top:12px">
+          <a class="btn sm" href="#/notes/${encodeURIComponent(q.s)}">${
+            esc(t('q_back_to_note', q.s, secTitle(q.s)))}</a>
+          <button class="btn sm primary" id="nextQ">${
+            esc(D.i + 1 >= D.list.length ? t('q_see_result') : t('q_next'))}</button>
+        </div>
+      </div>`;
+    const n = $('#nextQ');
+    n.onclick = () => { D.i++; degreeRun(); };
+    n.focus();
+  };
+  $$('.opt').forEach((b) => { b.onclick = () => showVerdict(+b.dataset.i, true); });
+  if (D.answered && D.answered.i === D.i) showVerdict(D.answered.pick, false);
 }
 
 function degreeDone() {
@@ -1193,7 +1234,7 @@ function practiceRun() {
       <div class="row" style="margin-bottom:14px">
         <a class="btn sm ghost" href="#/practice">${esc(t('practice_switch'))}</a>
         <span class="spacer"></span>
-        <span style="font-size:13px;color:var(--ink-3)">${esc(P.label)}</span>
+        <span style="font-size:13px;color:var(--ink-3)">${esc(practiceLabel(P))}</span>
       </div>
       <div class="progress-strip">${P.list.map((_, i) =>
         `<i class="${i < P.i ? (P.results[i] ? 'ok' : 'no') : i === P.i ? 'cur' : ''}"></i>`).join('')}</div>
@@ -1202,11 +1243,15 @@ function practiceRun() {
 
   bindMark($('#app'));
 
-  const finish = (pick) => {
+  // fresh=false 是换语言后的重绘：只恢复判分界面，不重复记分
+  const showVerdict = (pick, fresh) => {
     const ok = revealAnswer(q, pick, $('#app'));
-    record(q.id, ok);
-    P.results[P.i] = ok;
-    updateWrongPill();
+    if (fresh) {
+      record(q.id, ok);
+      P.results[P.i] = ok;
+      P.answered = { i: P.i, pick };
+      updateWrongPill();
+    }
     $$('.progress-strip i')[P.i].className = ok ? 'ok' : 'no';
     const label = P.i + 1 >= P.list.length ? t('q_see_result') : t('q_next');
     $('#verdict .row').insertAdjacentHTML('beforeend', `<button class="btn sm primary" id="nextQ">${esc(label)}</button>`);
@@ -1214,6 +1259,7 @@ function practiceRun() {
     n.onclick = () => { P.i++; practiceRun(); };
     n.focus();
   };
+  const finish = (pick) => showVerdict(pick, true);
 
   if (isMulti(q)) {
     const need = pickCount(q);
@@ -1231,6 +1277,7 @@ function practiceRun() {
   } else {
     $$('.opt').forEach((b) => { b.onclick = () => finish(+b.dataset.i); });
   }
+  if (P.answered && P.answered.i === P.i) showVerdict(P.answered.pick, false);
 }
 
 function practiceDone() {
@@ -1241,7 +1288,7 @@ function practiceDone() {
 
   $('#app').innerHTML = `
     <h1>${esc(t('practice_done'))}</h1>
-    <p class="sub">${esc(P.label)}</p>
+    <p class="sub">${esc(practiceLabel(P))}</p>
     <div class="card score-hero">
       <div class="lbl">${esc(t('practice_rate'))}</div>
       <div class="big ${rate >= 72 ? 'pass' : 'fail'}">${num(rate)}%</div>
@@ -1261,7 +1308,7 @@ function practiceDone() {
         <div class="iq" style="margin-top:8px;color:var(--ok)">${answerHtml(q)}</div>
       </div>`).join('')}` : ''}`;
 
-  $('#again').onclick = () => { P.list = shuffle(P.list); P.i = 0; P.results = []; practiceRun(); };
+  $('#again').onclick = () => { P.list = shuffle(P.list); P.i = 0; P.results = []; P.answered = null; practiceRun(); };
 }
 
 /* ================================================================
@@ -1273,7 +1320,8 @@ routes.wrong = (rest) => {
   if (rest[0] === 'run') {
     if (!ids.length) return go('/wrong');
     PRACTICE.list = shuffle(ids.map(byId));
-    PRACTICE.i = 0; PRACTICE.results = []; PRACTICE.label = t('wrong_label');
+    PRACTICE.i = 0; PRACTICE.results = []; PRACTICE.label = () => t('wrong_label');
+    PRACTICE.key = location.hash; PRACTICE.answered = null;
     return practiceRun();
   }
 
@@ -1628,7 +1676,13 @@ $$('.lang-opt').forEach((o) => {
     const next = o.dataset.lang === 'en' ? 'en' : 'zh';
     if (next === LANG()) return;          // 选的就是当前语言，不必重绘
     S.prefs.lang = next;
-    save(); paintChrome(); router();
+    save(); paintChrome();
+    // 刷题 / 进阶训练中途换语言只重绘当前题；其他页面照旧走 router
+    const h = location.hash;
+    if (canRepaintPractice(PRACTICE, h)) { practiceRun(); syncTopbarHeight(); }
+    else if (canRepaintPractice(BLIND, h)) { blindRepaint(); syncTopbarHeight(); }
+    else if (canRepaintPractice(DEGREE, h)) { degreeRun(); syncTopbarHeight(); }
+    else router();
     // 开着的浮层都要跟着换语言，否则它们会卡在旧语言里
     // （反馈面板连 mailto 的主题和正文都是按语言生成的，不重绘会发出中文邮件模板）
     if (!$('#progModal').hidden) renderProgressBody();

@@ -506,7 +506,7 @@ Object.assign(CONTENT_EN.questions, {
   "q037": {
     "q": "A university research assistant compares independent course collections. Investigations are lengthy, but the main task needs evidence summaries and applicable conditions. Delegation overhead is acceptable, yet compressed summaries sometimes lose attribution. Which context design fits best?",
     "o": [
-      "Add more retrieval agents to compensate for omissions in summaries",
+      "Split retrieval across more subagents to reduce how much each one must compress",
       "Isolate subtask contexts and verify summaries that include sources and conditions",
       "Accumulate source material and intermediate replies in the main context",
       "Use a larger model to produce evidence summaries and let it choose the attribution format"
@@ -521,7 +521,7 @@ Object.assign(CONTENT_EN.questions, {
   "q038": {
     "q": "A finance agent uses on-demand discovery but often misses an installed reporting tool. Connectivity and execution permissions are working. Tool descriptions contain only internal abbreviations, while users ask about business purposes. Which improvements should come first? Select 2.",
     "o": [
-      "Include the complete reporting manual on each request to offset discovery misses",
+      "Include the complete reporting manual on each request as a lookup reference",
       "Route discovery requests to a larger model using the existing abbreviated catalog",
       "Describe business purposes, inputs, and usage conditions in discovery metadata",
       "Keep discovery unchanged and improve the wording of returned reports",

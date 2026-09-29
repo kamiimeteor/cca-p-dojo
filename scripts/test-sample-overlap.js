@@ -25,10 +25,28 @@ const missing = loadSampleReferences(path.join(os.tmpdir(), randomUUID()));
 assert.equal(missing.samples, null);
 assert.equal(missing.mode, 'SKIPPED');
 assert.equal(missing.hashes.size, 0);
+assert.equal(missing.reason, 'missing', '没有缓存也没有 PDF 时，跳过原因应为「缺失」');
+// 缓存损坏：文件在但认不出样题结构，跳过原因应为「无法识别」，不能与缺失混为一谈
+const corrupt = fs.mkdtempSync(path.join(os.tmpdir(), 'cca-overlap-cache-'));
+try {
+  fs.mkdirSync(path.join(corrupt, 'source'), { recursive: true });
+  fs.writeFileSync(path.join(corrupt, 'source/official-samples.txt'), 'garbled cache without sample structure\n');
+  const unreadable = loadSampleReferences(corrupt);
+  assert.equal(unreadable.samples, null);
+  assert.equal(unreadable.mode, 'SKIPPED');
+  assert.equal(unreadable.reason, 'unrecognized', '缓存损坏时，跳过原因应为「无法识别」');
+} finally { fs.rmSync(corrupt, { recursive: true, force: true }); }
 const structure = 'Sample 1 · Synthetic\nAmber birds circle towers.\nA.Copper\nB.Silver\nC.Tin\nD.Zinc\nSample 1: A. Violet foxes cross bridges.';
 assert.equal(extractSamples(structure), structure);
 assert.equal(extractSamples(structure.replace('D.Zinc', 'Zinc')), null);
 assert.equal(extractSamples(structure.replace('Sample 1: A.', 'Result:')), null);
+// pdftotext -layout 会给行首加缩进：标题、选项、答案行和下一章编号都缩进时仍应识别并正确截断
+const layout = '   Sample 1 · Synthetic\n   Amber birds circle towers.\n     A.Copper\n     B.Silver\n     C.Tin\n     D.Zinc\n   Sample 1: A. Violet foxes cross bridges.\n\n   4. Next chapter heading\n   Unrelated text.';
+const layoutSamples = extractSamples(layout);
+assert(layoutSamples, '缩进的 PDF 版式应能识别样题结构');
+assert(layoutSamples.startsWith('Sample 1 ·'));
+assert(layoutSamples.endsWith('Violet foxes cross bridges.'), '应在缩进的下一章编号处截断');
+assert(!layoutSamples.includes('Next chapter'));
 // Load real file shapes: prose, lists, tables, metadata, and question overlays
 // must all be scanned. Exempt only the official objective title field.
 const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'cca-overlap-'));
@@ -63,7 +81,7 @@ try {
   ].sort());
 } finally { fs.rmSync(fixture, { recursive: true, force: true }); }
 console.log('✓ 笔记全文、元数据、英文题目均检出；仅官方 objective 标题字段豁免');
-console.log('✓ 合成屈折、双写辅音、通用词过滤、结构解析与无资料跳过测试通过');
+console.log('✓ 合成屈折、双写辅音、通用词过滤、结构解析（含缩进版式）与跳过原因（缺失 / 无法识别）测试通过');
 const cache = path.join(__dirname, '../source/official-samples.txt');
 if (!fs.existsSync(cache)) {
   console.log('SAMPLE SENTENCE TEST: SKIPPED (no local official samples)');

@@ -2,7 +2,8 @@
  * 优先读取 gitignored 的 source/official-samples.txt；没有缓存时尝试本地 PDF。
  * PDF 提取需要 pdftotext 或 python3 + pypdf，可用 PDF_PYTHON 指定解释器。
  * 输出「全文缓存」或「PDF 提取并缓存全文」说明资料来源。
- * 无可用本地资料时打印 SAMPLE OVERLAP: SKIPPED (no local official samples)，退出 0。
+ * 无可用本地资料时打印 SAMPLE OVERLAP: SKIPPED (no local official samples)，退出 0；
+ * 读到了缓存或 PDF 文本但认不出样题结构时打印 SKIPPED (local official samples unrecognized)。
  * 出题在作者本机进行；无资料的检出能力不作保证，CI 允许跳过。
  * 生成端和比对端共用 NFKC、小写、切词、去词尾、去尾 e 和双写辅音还原。
  * 四词哈希只在内存中生成，不写入仓库或其他输出文件。
@@ -99,31 +100,37 @@ function loadQuestions() {
   return loadContent().english.questions;
 }
 
-/** 从完整 Exam Guide 提取三道样题及解析，不把其他章节用于比对。 */
+/** 从完整 Exam Guide 提取三道样题及解析，不把其他章节用于比对。
+ *  行首锚点都允许前导空白：pdftotext -layout 会给标题和答案行加缩进。 */
 function extractSamples(text) {
   const normalized = text.normalize('NFKC');
-  const start = normalized.search(/^Sample\s+1\s*[·—-]/im);
+  const start = normalized.search(/^\s*Sample\s+1\s*[·—-]/im);
   if (start < 0) return null;
   const tail = normalized.slice(start);
-  const end = tail.search(/^\d+\.\s+[^\n]+$/m);
+  const end = tail.search(/^\s*\d+\.\s+[^\n]+$/m);
   const samples = (end < 0 ? tail : tail.slice(0, end)).trim();
-  const headings = [...samples.matchAll(/^Sample\s+(\d+)\s*[·—-]/gim)];
+  const headings = [...samples.matchAll(/^\s*Sample\s+(\d+)\s*[·—-]/gim)];
   if (headings.length < 1) return null;
   for (let i = 0; i < headings.length; i++) {
     const number = headings[i][1];
     const block = samples.slice(headings[i].index, headings[i + 1]?.index);
     if (!['A', 'B', 'C', 'D'].every((letter) => new RegExp('^\\s*' + letter + '\\.', 'm').test(block))) return null;
-    if (!new RegExp('^Sample\\s+' + number + '\\s*:\\s*[A-D]\\.', 'im').test(samples)) return null;
+    if (!new RegExp('^\\s*Sample\\s+' + number + '\\s*:\\s*[A-D]\\.', 'im').test(samples)) return null;
   }
   return samples;
 }
 
 function loadSampleReferences(root = path.resolve(__dirname, '..')) {
   const cache = path.join(root, 'source/official-samples.txt');
-  try {
-    const samples = extractSamples(fs.readFileSync(cache, 'utf8'));
+  // 跳过原因：missing = 没有可读缓存、也没提取到 PDF 文本；unrecognized = 读到了文本但认不出样题结构（缓存损坏等）
+  let unrecognized = false;
+  let cached = null;
+  try { cached = fs.readFileSync(cache, 'utf8'); } catch (_) { /* 没有可读缓存时尝试本地 PDF。 */ }
+  if (cached !== null) {
+    const samples = extractSamples(cached);
     if (samples) return { hashes: hashesForText(samples), mode: '全文缓存', samples };
-  } catch (_) { /* 没有可读缓存时尝试本地 PDF。 */ }
+    unrecognized = true;
+  }
   const python = process.env.PDF_PYTHON || 'python3';
   const pythonCode = 'import sys\nfrom pypdf import PdfReader\nprint("\\n".join(p.extract_text() or "" for p in PdfReader(sys.argv[1]).pages))';
   let files = [];
@@ -137,21 +144,23 @@ function loadSampleReferences(root = path.resolve(__dirname, '..')) {
         const text = execFileSync(command, args, { encoding: 'utf8', timeout: 15000,
           maxBuffer: 8 * 1024 * 1024, stdio: ['ignore', 'pipe', 'pipe'] });
         const samples = extractSamples(text);
-        if (!samples) continue;
+        if (!samples) { unrecognized = true; continue; }
         fs.mkdirSync(path.dirname(cache), { recursive: true });
         fs.writeFileSync(cache, samples + '\n');
         return { hashes: hashesForText(samples), mode: 'PDF 提取并缓存全文', samples };
       } catch (_) { /* 提取工具缺失或 PDF 不可读：尝试下一项，最终跳过。 */ }
     }
   }
-  return { hashes: new Set(), samples: null, mode: 'SKIPPED' };
+  return { hashes: new Set(), samples: null, mode: 'SKIPPED', reason: unrecognized ? 'unrecognized' : 'missing' };
 }
 
 if (require.main === module) {
   try {
     const source = loadSampleReferences();
     if (!source.samples) {
-      console.log('SAMPLE OVERLAP: SKIPPED (no local official samples)');
+      console.log(source.reason === 'unrecognized'
+        ? 'SAMPLE OVERLAP: SKIPPED (local official samples unrecognized)'
+        : 'SAMPLE OVERLAP: SKIPPED (no local official samples)');
     } else {
       const hits = checkContent(loadContent(), source.hashes);
       if (hits.length) {

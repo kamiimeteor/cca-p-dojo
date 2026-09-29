@@ -451,7 +451,7 @@ Object.assign(CONTENT_EN.questions, {
       "Add call-chain time budgets and fallback paths that preserve required answer quality",
       "Increase reasoning effort for complex requests on the same model"
     ],
-    "e": "The commitment covers full completion time and answer quality. Percentiles and failure accounting expose slow requests; call-chain budgets and quality-preserving fallback paths help manage timeout risk. See notes 1.6.",
+    "e": "The commitment covers full completion time and answer quality. Percentiles and failure accounting expose slow requests; call-chain budgets and quality-preserving fallback paths help manage timeout risk, and they still need validation under realistic load. See notes 1.6.",
     "w": {
       "0": "[Metric substitution] First-token latency measures the start of output, not full request completion.",
       "1": "[Metric substitution] A mean does not measure the slow-request completion time covered by the commitment.",

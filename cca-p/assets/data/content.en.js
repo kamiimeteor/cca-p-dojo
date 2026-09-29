@@ -762,7 +762,7 @@ const CONTENT_EN = {
           ]
         },
         {
-          "v": "With thinking active, official guidance favors broad reasoning directions, which often work better than prescribing every step; examples still apply. The first three models in the table omit thinking text by default; `display: summarized` exposes a summary, not the full internal reasoning. Recheck configuration when migrating; 3.3 records an earlier date. Prompt chaining passes artifacts between calls and can use programmatic gates. CoT within one call does not create that workflow; see 1.3. Sources: Prompting best practices, Thinking, Building effective agents (official pages, 2026-09-29)"
+          "v": "With thinking active, official guidance favors broad reasoning directions, which often work better than prescribing every step; examples still apply. The first three models in the table omit thinking text by default; `display: summarized` exposes a summary, not the full internal reasoning. Recheck configuration when migrating; 3.3 matches this table. Prompt chaining passes artifacts between calls and can use programmatic gates. CoT within one call does not create that workflow; see 1.3. Sources: Prompting best practices, Thinking, Building effective agents (official pages, 2026-09-29)"
         },
         {
           "title": "Decision rules (rules of thumb)",
@@ -1214,7 +1214,7 @@ const CONTENT_EN = {
           ]
         },
         {
-          "v": "Thinking is model-specific. Current docs state that adaptive thinking cannot be disabled on Opus 5.5 or Fable 5.1; Sonnet 5 defaults to thinking but permits disabling it; Opus 4.7 thinks only when `thinking.type: adaptive` is set (default off). Manual `type: enabled` with `budget_tokens` is deprecated but accepted on Opus / Sonnet 4.6; Opus 4.7 onward rejects it with 400. Haiku 4.5 supports only manual extended thinking. Sources: Anthropic Thinking, Extended thinking, and Effort, checked 2026-09-27. Recheck model support when switching."
+          "v": "Thinking is model-specific. Current docs state that adaptive thinking cannot be disabled on Opus 5.5 or Fable 5.1. Sonnet 5.5 defaults to adaptive thinking and rejects `disabled` with a 400; its lowest setting is `between_tools`, accepted only at `low / medium / high` effort, which suppresses up-front reasoning but can still return progress updates between tools (see 2.3). Opus 4.7 thinks only when `thinking.type: adaptive` is set (default off). Manual `type: enabled` with `budget_tokens` is deprecated but accepted on Opus / Sonnet 4.6; Opus 4.7 onward rejects it with 400. Haiku 4.5 supports only manual extended thinking. Sources: Anthropic Thinking and Models overview, checked 2026-09-29. Recheck model support when switching."
         },
         {
           "v": "Streaming improves visible responsiveness without guaranteeing faster completion or better accuracy. Message Batches processes independent requests asynchronously at 50% of standard API prices (a 50% saving). Most batches finish within one hour, without a one-hour guarantee. Processing ends when all requests finish or after 24 hours; unfinished requests then expire. Use it for work that can wait. Parallel calls do not reduce total call count. Source: Anthropic Batch processing, checked 2026-09-27."
@@ -1993,7 +1993,7 @@ const CONTENT_EN = {
           "v": "Official guidance gives three basic strategies for reducing hallucinations: allow Claude to say it does not know; ground facts in direct quotations, extracting verbatim passages before doing the task when documents exceed 20k tokens; and check each claim against cited passages and sources. These techniques can reduce hallucinations but do not eliminate them. Diagnostic heuristic: distinguish missing source information, retrieval misses, and misinterpretation in the answer. Retrieve more evidence or escalate when support is absent; a firmer tone does not make a claim more reliable."
         },
         {
-          "v": "Inspect the evaluator too (official page, 2026-09-29). The 2026 eval blog reports that Opus 4.5 initially scored 42% on CORE-Bench, reaching 95% after grading and other bugs were fixed and scaffold constraints were relaxed. This compares evaluation conditions before and after repairs, not a model upgrade; it does not predict production accuracy."
+          "v": "Inspect the evaluator too (official page: Demystifying evals for AI agents, 2026-09-29). The 2026 eval blog reports that Opus 4.5 initially scored 42% on CORE-Bench, reaching 95% after grading and other bugs were fixed and scaffold constraints were relaxed. This compares evaluation conditions before and after repairs, not a model upgrade; it does not predict production accuracy."
         },
         {
           "v": [
@@ -2074,7 +2074,7 @@ const CONTENT_EN = {
           ]
         },
         {
-          "v": "The cache pricing table (official page, 2026-09-29) lists five-minute / one-hour writes at 1.25× / 2× the base input price. Reads are usually 0.1×, except Fable 5.1 / Mythos 5.1 at 0.025× and Opus 5.5 at 0.05×. The default lifetime is five minutes, refreshed on a hit. Cost heuristic: include writes and misses; a read discount is not the reduction in the entire bill."
+          "v": "The cache pricing table (official page: Prompt caching, 2026-09-29) lists five-minute / one-hour writes at 1.25× / 2× the base input price. Reads are usually 0.1×, except Fable 5.1 / Mythos 5.1 at 0.025× and Opus 5.5 at 0.05×. The default lifetime is five minutes, refreshed on a hit. Cost heuristic: include writes and misses; a read discount is not the reduction in the entire bill."
         },
         {
           "v": "Batch behavior follows 3.3 (official page, 2026-09-29): Message Batches charges 50% of standard API prices. Most batches finish within one hour, without a guarantee; unfinished requests expire at 24 hours. Heuristics: consider batches for offline evals, measure TTFT and completion deadlines separately for interactive traffic, and use the usage fields in 4.6 to check caching savings."
@@ -2134,7 +2134,7 @@ const CONTENT_EN = {
           "title": "What this objective tests"
         },
         {
-          "v": "Logging heuristics: connect tasks, models, prompt / settings, retrieval versions, tool arguments and results, durations, retries, and business outcomes with traces and spans. Sample redacted inputs and outputs with access and retention limits. Group dashboards by version, task, and population; display quality, latency percentiles, cost, and cache usage."
+          "v": "See 3.4 for log fields, redacted sampling, and access and retention limits. The daily-check angle here is a heuristic: group dashboards by version, task, and population, and show quality, latency percentiles, cost, and cache usage so each day can be compared with the baseline."
         },
         {
           "head": [
@@ -2744,8 +2744,8 @@ const CONTENT_EN = {
         },
         {
           "v": [
-            "If fixed rules already solve the problem → retain ordinary code, because there is no evidence that generative processing adds value.",
-            "If the goal is only to improve efficiency → define a baseline and task metrics, because a slogan cannot establish acceptance.",
+            "If interviews show that known rules fully determine the task → record the rules and exceptions, then use 1.1 to decide whether an LLM is needed, because discovery supplies the evidence for that choice.",
+            "If an expected benefit has no baseline or pilot yet → record it as an assumption and agree on sampling and acceptance measures, because an unverified benefit cannot be reported as a measured result.",
             "If data access or compliance boundaries are unclear → establish the permitted scope first, because a successful demo does not establish production readiness.",
             "If stakeholders disagree about success → agree on scoring criteria using representative cases, because the same metric name can conceal different definitions."
           ],
@@ -2767,11 +2767,11 @@ const CONTENT_EN = {
           "rows": [
             [
               "Customer specifies an agent framework first",
-              "Return to the task and whether an LLM fits"
+              "Record the business problem first; see 1.1 for selection"
             ],
             [
-              "Goals are only better or faster",
-              "Define the baseline and acceptance method"
+              "An expected benefit has no baseline",
+              "Record an assumption; agree on sampling and acceptance"
             ],
             [
               "Data ownership is unclear",
@@ -2779,7 +2779,7 @@ const CONTENT_EN = {
             ],
             [
               "Users and approvers disagree",
-              "Use cases to establish tasks and responsibilities"
+              "Walk through real cases to confirm tasks and responsibilities"
             ]
           ]
         }
@@ -3088,7 +3088,7 @@ const CONTENT_EN = {
         {
           "v": [
             "If only the code has been delivered → transfer evaluations, monitoring, and responsibilities, because deployability does not establish operational readiness.",
-            "If live metrics cross agreed limits → follow the degradation or rollback plan, because expanding traffic can increase the impact.",
+            "If live metrics cross agreed limits → follow the degradation or rollback plan, because expanding traffic may increase the impact.",
             "If a promising change fails regression checks → pause rollout and investigate, because new gains do not excuse lost capabilities.",
             "If the business scope expands → revisit success criteria and risks, because earlier acceptance evidence covers the earlier scope."
           ],
