@@ -1249,7 +1249,87 @@ const CONTENT_EN = {
       "title": "Define evaluation metrics (accuracy, latency, cost, safety, security)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Define repeatable measures of quality, speed, cost, and risk. See 1.6 for mapping them to business value.",
+          "title": "What this objective tests"
+        },
+        {
+          "v": "Official guidance describes success criteria as specific, measurable, achievable, and relevant. This note adds the time-bound part of SMART as an engineering heuristic: specify the evaluation window, population, denominator, grading rules, and target. These are application acceptance criteria, not universal official thresholds."
+        },
+        {
+          "head": [
+            "Metric",
+            "Measurement convention (engineering heuristics)"
+          ],
+          "rows": [
+            [
+              "Accuracy",
+              "Correct cases / graded cases. Also report the ungraded share and break results down by task and difficulty."
+            ],
+            [
+              "Latency",
+              "TTFT runs from request submission to the first token. Task duration runs through completion, including tools and retries. Report p50 / p95 / p99 separately: the 50th / 95th / 99th percentiles."
+            ],
+            [
+              "Cost",
+              "All model, tool, retry, human, and operating costs in the window / successful tasks. With zero successes, report failure spending separately."
+            ],
+            [
+              "Safety",
+              "Harmful outputs / reviewed outputs; refusals / requests; inappropriate refusals / answerable requests. Define harmful and answerable labels first."
+            ],
+            [
+              "Security",
+              "Achieved attack objectives / valid injection trials. Fix the attack set, permission environment, and success criteria."
+            ]
+          ]
+        },
+        {
+          "v": "Trade-off heuristic: choose a primary metric in advance, with quality, safety, and completion deadlines as constraints. More refusals may also block legitimate tasks; lower per-call prices may lead to more retries. Keep separate measures so a combined score cannot conceal risk."
+        },
+        {
+          "v": [
+            "If correct delivery matters → measure success rate and cost per successful task, because cheaper calls may not reduce total spending.",
+            "If users report slow responses → separate TTFT from task duration, because visible text does not establish completion.",
+            "If stricter filtering lowers harmful output rates → also check inappropriate refusals, because legitimate requests may be blocked.",
+            "If comparing versions → keep the window and sampling definitions consistent, because changing denominators can create apparent gains."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Report mean latency alone: slow requests can disappear in the average.",
+            "Count every refusal as a safety success: this misses the loss of legitimate task completion.",
+            "Measure only toxic text: this does not test whether injection caused an unauthorized action."
+          ],
+          "title": "Common traps (engineering heuristics)"
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Better accuracy but many more retries",
+              "Check total cost per successful task"
+            ],
+            [
+              "Fast initial text but missed deadlines",
+              "Separate TTFT and completion percentiles"
+            ],
+            [
+              "Harmless requests rejected",
+              "Measure inappropriate refusals"
+            ],
+            [
+              "Malicious tool results change behavior",
+              "Measure attack objective success"
+            ],
+            [
+              "Only “faster and safer” is specified",
+              "Define samples, grading, targets, and a window"
+            ]
+          ]
         }
       ]
     },
@@ -1257,7 +1337,82 @@ const CONTENT_EN = {
       "title": "Design evaluation datasets and test frameworks using mixed methodologies",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Combine code, model, and human graders according to what is being assessed; inspect both the agent outcome and its trajectory.",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Grader",
+            "Use and limits"
+          ],
+          "rows": [
+            [
+              "Code",
+              "Exact matching, unit tests, and structural validation fit explicitly verifiable conditions. Rigid rules can reject valid variations."
+            ],
+            [
+              "LLM-as-judge",
+              "Use a rubric for open answers, with criteria per dimension, reference answers, and an “unknown” option. Official guidance recommends calibration against human experts."
+            ],
+            [
+              "Human",
+              "Assess subjective quality, resolve disagreements, and calibrate judges. Review is detailed but slow and expensive; reviewers can also disagree."
+            ]
+          ]
+        },
+        {
+          "v": "Dataset heuristics: include routine, boundary, and adversarial cases, with paired cases where a behavior is appropriate or inappropriate. Keep the test set separate from tuning examples. Inspect judge errors against human labels; swap answer order and compare lengths to test for bias. Freeze the rubric version before comparing systems."
+        },
+        {
+          "v": "The outcome is the final environment state; trajectories help explain tool selection and intermediate errors. Official guidance often favors grading the artifact, avoiding a fixed valid path. The 2026 eval blog suggests starting early with 20 to 50 simple tasks from real failures. Mature systems may use larger, harder sets to detect smaller changes; this is not a statistical significance sample size."
+        },
+        {
+          "v": "Offline tests support regression checks before release. Production monitoring, user feedback, A/B testing, manual trajectory review, and systematic human assessment complement them. Heuristics: repeat trials for each task and reset the environment between trials; review new production failures before adding them to offline tests."
+        },
+        {
+          "v": [
+            "If rules can verify the result → prefer code graders, because the checks are reproducible.",
+            "If several answers are valid → use a rubric with human calibration, because identical wording is not the only measure of correctness.",
+            "If an agent claims success → verify the final state, because a statement does not prove execution.",
+            "If offline scores are high but production degrades → inspect distributions and trajectories, because the test set may miss real usage."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Treat judge scores as truth: human agreement and bias have not been checked.",
+            "Test only tasks that call for tools: this may reward unnecessary calls.",
+            "Enforce a single tool sequence: this can penalize other valid solutions."
+          ],
+          "title": "Common traps (engineering heuristics)"
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Fixed fields or runnable programs",
+              "Structural validation or unit tests"
+            ],
+            [
+              "Open summaries and analysis",
+              "Rubric with human calibration"
+            ],
+            [
+              "Completion claimed but state unchanged",
+              "Verify the outcome"
+            ],
+            [
+              "Repeated runs vary",
+              "Multiple trials with isolated environments"
+            ],
+            [
+              "New production failure",
+              "Review it and add a regression case"
+            ]
+          ]
         }
       ]
     },
@@ -1265,7 +1420,83 @@ const CONTENT_EN = {
       "title": "Conduct A/B testing and iterative improvements",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Validate a change with a reproducible comparison that supports attribution, then use production outcomes to decide whether to expand or roll back.",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Stage",
+            "Execution convention (engineering heuristics)"
+          ],
+          "rows": [
+            [
+              "Hypothesis",
+              "Predefine the primary metric, quality and safety constraints, observation window, and stopping and rollback conditions. Change one variable at a time."
+            ],
+            [
+              "Offline comparison",
+              "Use the old version as the baseline; change only the prompt or one setting. Fix tasks, graders, and environment, repeat trials, and run regression checks."
+            ],
+            [
+              "Production A/B",
+              "Randomly assign eligible traffic to control and treatment. Keep assignment stable per user or session so a task does not mix versions."
+            ],
+            [
+              "Version record",
+              "Save the prompt template and variables, model / settings, tool / retrieval versions, dataset, rubric, experiment ID, and results. Retain a version for rollback."
+            ]
+          ]
+        },
+        {
+          "v": "Statistical heuristics: sample size depends on baseline variability, the smallest difference worth detecting, and statistical power. Agree on significance criteria in advance and report effect size and uncertainty. If evidence is insufficient, keep observing or report an unresolved result. No significant difference does not establish equivalence; a temporary lead is not a reason to stop."
+        },
+        {
+          "v": "The official eval blog treats offline evaluation and A/B tests on real traffic as complementary. Offline checks can detect regressions before release; A/B measures actual user outcomes. Reaching significance can take days or weeks, depending on traffic. Heuristics: begin with limited exposure after offline checks pass. Stop or roll back for safety incidents or predefined quality, latency, or cost breaches, without waiting for a win on the primary metric."
+        },
+        {
+          "v": [
+            "If the aim is to identify an effective change → vary one factor, because changing both model and prompt obscures attribution.",
+            "If a new prompt improves the average score → also inspect regressions and difficult cases, because averages may hide localized losses.",
+            "If offline checks pass and traffic is sufficient → run production A/B, because real task completion remains to be tested.",
+            "If a rollback condition is met → restore a validated version, because experimental gains do not cancel agreed risk limits."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Compare this week’s new version with last week’s old one: timing and audience changes can confound the result.",
+            "Keep checking and declare victory at the first lead: this increases the risk of a chance finding.",
+            "Save only the final prompt text: missing variables and dependency versions make reproduction harder."
+          ],
+          "title": "Common traps (engineering heuristics)"
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Prompt, model, and retrieval changed together",
+              "Separate experiments for attribution"
+            ],
+            [
+              "High offline scores but unknown user completion",
+              "A/B on limited traffic"
+            ],
+            [
+              "Few samples and unstable differences",
+              "Continue under predefined criteria"
+            ],
+            [
+              "Quality or safety limit breached",
+              "Stop or roll back"
+            ],
+            [
+              "Historical results cannot be reproduced",
+              "Record prompt and dependency versions"
+            ]
+          ]
         }
       ]
     },
@@ -1273,7 +1504,91 @@ const CONTENT_EN = {
       "title": "Diagnose system issues (prompt failure, hallucinations, model mismatch)",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Use failed cases and trajectories to identify the failing layer before changing a component. See R.1, “Wrong-layer diagnosis.”",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Layer",
+            "Evidence → repair direction (engineering heuristics)"
+          ],
+          "rows": [
+            [
+              "Input",
+              "Missing fields, garbled text, or ambiguous tasks → inspect the original request and preprocessing; complete the input."
+            ],
+            [
+              "Retrieval",
+              "Evidence exists in the source but is absent from candidates, or the index is stale → inspect recall and versions. Consider reranking when candidates already contain the evidence."
+            ],
+            [
+              "Prompt",
+              "Conflicting instructions or examples skewed toward one class → compare the assembled prompt and examples; resolve conflicts and add representative examples."
+            ],
+            [
+              "Model",
+              "Reasoning fails despite adequate evidence and prompts → compare capability. Simple tasks already pass but cost too much → test lower effort or a faster model (see 3.3)."
+            ],
+            [
+              "Output",
+              "Parseable output has false claims or unsupported citations → separately check schema, business rules, and citation support."
+            ],
+            [
+              "Tool",
+              "Bad arguments, denied access, timeouts, or failed execution → compare arguments, return values, and actual side effects; repair the tool or its calling contract."
+            ]
+          ]
+        },
+        {
+          "v": "Official guidance gives three basic strategies for reducing hallucinations: allow Claude to say it does not know; ground facts in direct quotations, extracting verbatim passages before doing the task when documents exceed 20k tokens; and check each claim against cited passages and sources. These techniques can reduce hallucinations but do not eliminate them. Diagnostic heuristic: distinguish missing source information, retrieval misses, and misinterpretation in the answer. Retrieve more evidence or escalate when support is absent; a firmer tone does not make a claim more reliable."
+        },
+        {
+          "v": "Inspect the evaluator too (official page, 2026-09-29). The 2026 eval blog reports that Opus 4.5 initially scored 42% on CORE-Bench, reaching 95% after grading and other bugs were fixed and scaffold constraints were relaxed. This compares evaluation conditions before and after repairs, not a model upgrade; it does not predict production accuracy."
+        },
+        {
+          "v": [
+            "If sources are missing → repair data or retrieval, because prompt changes cannot supply absent evidence.",
+            "If rules conflict or examples are skewed → revise the assembled prompt, because it may elicit unintended patterns.",
+            "If complex reasoning still fails with the same adequate evidence → compare models and effort, because a capability gap supports a configuration change.",
+            "If scores are low but artifacts are valid → inspect tasks and graders, because grading code can be wrong."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Upgrade the model after any error: without diagnosis, a stale index may go unnoticed.",
+            "Repeat “do not hallucinate” instead of checking evidence: an instruction does not verify an answer.",
+            "Claim completion after a tool error: this conceals execution failure."
+          ],
+          "title": "Common traps (engineering heuristics)"
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Old documents or missed evidence",
+              "Inspect retrieval and data versions"
+            ],
+            [
+              "Conflicting rules for identical input",
+              "Inspect prompt conflicts"
+            ],
+            [
+              "Reasoning fails with adequate evidence",
+              "Compare capability and effort"
+            ],
+            [
+              "Citations do not support the claims",
+              "Verify each claim against evidence"
+            ],
+            [
+              "Valid artifact graded as wrong",
+              "Inspect grader and environment"
+            ]
+          ]
         }
       ]
     },
@@ -1281,7 +1596,83 @@ const CONTENT_EN = {
       "title": "Optimize token usage, latency, and cost-performance trade-offs",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Locate token spending and waiting time, then compare cost per successful task among candidates that meet quality targets. See 3.3 for configuration trade-offs.",
+          "title": "What this objective tests"
+        },
+        {
+          "head": [
+            "Optimization",
+            "Mechanism and limits"
+          ],
+          "rows": [
+            [
+              "Prompt caching",
+              "Matching prefixes let the service reuse input processing; generated answers are not cached. Arrange reusable material before request-specific content. A hit depends on exact prefix matching, a live cache entry, and the model and platform length rules, among other conditions."
+            ],
+            [
+              "Model and effort",
+              "Compare model tiers on real tasks. On supported models, adjust `output_config.effort`: it is soft guidance and does not guarantee a fixed token count. See 3.3 for compatibility."
+            ],
+            [
+              "Streaming and parallelism",
+              "Streaming improves visible responsiveness without guaranteeing earlier completion. Independent read-only tools are usually suitable for parallel execution; side effects, shared state, or ordering constraints may favor sequential execution."
+            ],
+            [
+              "Context and output",
+              "Official guidance recommends trimming context while retaining decisions and evidence, and constraining length by sentences or paragraphs. `max_tokens` is a hard ceiling that can truncate output, not a natural stopping point."
+            ]
+          ]
+        },
+        {
+          "v": "The cache pricing table (official page, 2026-09-29) lists five-minute / one-hour writes at 1.25× / 2× the base input price. Reads are usually 0.1×, except Fable 5.1 / Mythos 5.1 at 0.025× and Opus 5.5 at 0.05×. The default lifetime is five minutes, refreshed on a hit. Cost heuristic: include writes and misses; a read discount is not the reduction in the entire bill."
+        },
+        {
+          "v": "Batch behavior follows 3.3 (official page, 2026-09-29): Message Batches charges 50% of standard API prices. Most batches finish within one hour, without a guarantee; unfinished requests expire at 24 hours. Heuristics: consider batches for offline evals, measure TTFT and completion deadlines separately for interactive traffic, and use the usage fields in 4.6 to check caching savings."
+        },
+        {
+          "v": [
+            "If a large prefix is reused → evaluate caching, because it can reuse input processing.",
+            "If responses are verbose → constrain length first, because simply lowering the ceiling may cut off the answer.",
+            "If independent read-only queries cause the wait → evaluate parallel execution, because sequential waiting is the bottleneck.",
+            "If lowering the model tier or trimming context → rerun quality regressions and account for retries, because fewer tokens do not establish lower cost per successful task."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Insert a fresh timestamp into the prefix every time: the change can prevent cache hits.",
+            "Stop trimming context once hits improve: cached content still occupies context.",
+            "Use batch discounts to promise immediate responses: one-hour completion is not guaranteed."
+          ],
+          "title": "Common traps (engineering heuristics)"
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Stable prefix reused",
+              "Check hits and write costs"
+            ],
+            [
+              "Verbose, expensive output",
+              "Limit length and inspect truncation"
+            ],
+            [
+              "Independent read-only tools",
+              "Evaluate parallel execution"
+            ],
+            [
+              "Offline tasks can wait",
+              "Batch with expiry handling"
+            ],
+            [
+              "Lower prices but more retries",
+              "Compare cost per successful task"
+            ]
+          ]
         }
       ]
     },
@@ -1289,7 +1680,98 @@ const CONTENT_EN = {
       "title": "Monitor system performance using logging and observability tools",
       "blocks": [
         {
-          "v": "(TODO)"
+          "v": "Turn logs into daily checks and responses. See 3.4 for monitoring strategy at scale.",
+          "title": "What this objective tests"
+        },
+        {
+          "v": "Logging heuristics: connect tasks, models, prompt / settings, retrieval versions, tool arguments and results, durations, retries, and business outcomes with traces and spans. Sample redacted inputs and outputs with access and retention limits. Group dashboards by version, task, and population; display quality, latency percentiles, cost, and cache usage."
+        },
+        {
+          "head": [
+            "stop_reason",
+            "Meaning"
+          ],
+          "rows": [
+            [
+              "end_turn",
+              "The model ended its reply naturally; this does not establish business success."
+            ],
+            [
+              "max_tokens",
+              "The request’s generation limit was reached."
+            ],
+            [
+              "stop_sequence",
+              "A custom stopping sequence was encountered."
+            ],
+            [
+              "tool_use",
+              "The model issued a tool call; execution is not established."
+            ],
+            [
+              "pause_turn",
+              "A server tool loop reached its iteration limit and can be continued."
+            ],
+            [
+              "refusal",
+              "The model declined to respond."
+            ],
+            [
+              "model_context_window_exceeded",
+              "Output reached the model’s context-window boundary."
+            ]
+          ]
+        },
+        {
+          "v": "Usage accounting: total input = `input_tokens` + `cache_creation_input_tokens` + `cache_read_input_tokens`; output uses `output_tokens`. Streaming `message_delta.usage` values are cumulative, so adding them repeatedly overcounts. Record final usage separately from business outcome."
+        },
+        {
+          "v": "Daily operating heuristics: use baselines and SLAs to define thresholds, windows, minimum sample sizes, and owners; attach failing traces and response steps to alerts. Compare task distributions and quality by group to detect drift. Combine random production sampling with focused failure review, calibrate judges against human labels, and add confirmed failures to the 4.2 regression suite."
+        },
+        {
+          "v": [
+            "If quality declines while HTTP status remains normal → inspect samples and trajectories, because status codes miss semantic errors.",
+            "If truncation increases → inspect output budgets and context, because the two limits call for different handling.",
+            "If cost is anomalous → separate cache reads, writes, output, and retries, because ordinary input alone misses spending.",
+            "If one task group degrades → review that group, because traffic proportions can conceal quality drift."
+          ],
+          "title": "Decision rules (engineering heuristics)"
+        },
+        {
+          "v": [
+            "Record success on tool_use: tool execution and business outcome remain unconfirmed.",
+            "Estimate overall quality using only error samples: the sample distribution is biased.",
+            "Treat refusal as proof of inappropriate rejection: answerability has not been assessed."
+          ],
+          "title": "Common traps (engineering heuristics)"
+        },
+        {
+          "head": [
+            "Scenario signal (engineering heuristics)",
+            "Preferred direction"
+          ],
+          "rows": [
+            [
+              "Normal HTTP status, more complaints",
+              "Quality sampling with traces"
+            ],
+            [
+              "Generation limits reached frequently",
+              "Inspect budgets and response length"
+            ],
+            [
+              "Frequent hits but high bills",
+              "Separate writes, reads, output, and retries"
+            ],
+            [
+              "One task group degrades after release",
+              "Group-level drift alerts and regressions"
+            ],
+            [
+              "Alerts receive no response",
+              "Assign owners, windows, and response steps"
+            ]
+          ]
         }
       ]
     },

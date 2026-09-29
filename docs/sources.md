@@ -125,6 +125,50 @@ D1 的设计表、决策规则与题目信号是原创教学归纳；其中标�
 - [https://platform.claude.com/docs/en/build-with-claude/prompt-caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)：核实稳定前缀匹配、输入处理复用、输出生成不变与缓存最低长度等适用条件。
 - [https://www.anthropic.com/engineering/multi-agent-research-system](https://www.anthropic.com/engineering/multi-agent-research-system)：核实多 agent 委托开销、非确定性、生产 tracing 与隐私约束下的行为观测。
 
+## 4.1
+
+D4 查阅日期：2026-09-29。以下指标口径、实验设计、诊断流程、监控阈值及题目信号为原创教学归纳，按正文标注区分官方机制与经验法则；不是 Anthropic 统一要求。D4 不新增当前型号表：当天官方选型页已列 Sonnet 5.5，任务书及 3.3 的 Sonnet 5 是先前记录；不在本轮改动范围外更新 D3。
+
+- [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实具体、可测、可实现、相关四项成功标准与多维评估；SMART 的时间限定、各指标分母和成本公式是本文度量约定，非该页的第五项官方要求。
+- [Reducing latency](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency)：核实 TTFT 的起止点及它与完整输出的区别；任务总时长另计工具和重试，百分位、窗口按本文约定。
+- [Mitigate jailbreaks and prompt injections](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)：核实带注入的文档、邮件、工具结果测试及持续分析；注入成功率公式为本文评估约定。
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实应做 / 不应做行为的双向评估；有害输出、拒答与过度拒答分开统计是据此采用的度量经验法则。
+
+## 4.2
+
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实代码 / 模型 / 人工三类判分、outcome 与 trajectory、重复 trial、环境隔离、专家校准、线上线下互补；保留“通常更适合评产物”的条件语气。2026-01-09 博客的 20–50 个任务是早期评估起点建议，不是 A/B 显著性样本量或保证。
+- [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实精确匹配、任务代表性、边界输入、清晰 rubric、先验证 judge 可靠性再扩展；留出测试集和对答案顺序 / 长度的偏差检查为本文评估设计。
+- [Mitigate jailbreaks and prompt injections](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)：核实上线前对抗注入测试；常见、边界、对抗三类是本文的数据集分组，不冒充官方穷尽分类。
+
+## 4.3
+
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实 A/B 测真实用户结果，与离线回归互补；显著性可能用数天或数周并依赖足够流量，不写成固定实验时长。样本量、统计把握度、效应与不确定性、预定停止判据都是通用实验经验法则，无虚构数值。
+- [Define success criteria and build evaluations](https://platform.claude.com/docs/en/test-and-evaluate/develop-tests)：核实与基线 / 先前版本比较以及迭代测试。单变量、随机稳定分组、版本记录、有限放量、回滚边界是本文落地方案，不冒充该页规定。
+
+## 4.4
+
+- [Prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)：核实示例的相关性、多样性和结构化边界；指令冲突检查与六层排查表为本文诊断经验法则，未复述完整 prompting 指南。
+- [Reduce hallucinations](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-hallucinations)：核实三条基础策略：允许说「不知道」；用直接引用做事实依据，文档超过 20k tokens 时先抽取逐字引文再执行任务；用引文与来源逐项核验断言。核实这些措施不能完全消除幻觉；未把“缺证据”与所有幻觉原因等同。
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实读轨迹以区分系统与 grader 错误；2026 年博客记录 Opus 4.5 的 CORE-Bench 得分在修判分等问题、放宽 scaffold 后由 42% 到 95%，不是换模型实验，未外推。
+- [Choosing the right model](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model)：核实用实际任务、提示和数据评估能力、速度、成本；“模型能力不足 / 过剩”的诊断条件是本文推论，配置细节参见 3.3。
+- [Contextual Retrieval](https://www.anthropic.com/engineering/contextual-retrieval)：核实召回候选后重排的顺序；据此区分缺证据、漏召回和候选排序问题，与 3.5 一致。
+
+## 4.5
+
+- [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)：核实完全一致前缀、默认五分钟及命中刷新、按模型 / 平台的最低长度、复用输入而非答案。写入倍数为 1.25× / 2×；读取通常 0.1×，Fable 5.1 / Mythos 5.1 为 0.025×，Opus 5.5 为 0.05×，按 2026-09-29 页面保留例外，未推广成总费用降幅。
+- [Thinking](https://platform.claude.com/docs/en/build-with-claude/thinking)、[Effort](https://platform.claude.com/docs/en/build-with-claude/effort) 与 [Choosing the right model](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model)：核实 `output_config.effort`、软指导与硬上限区别及实测选型；沿用 3.3 已有的取舍说法，不新增各型号配置表。
+- [Batch processing](https://platform.claude.com/docs/en/build-with-claude/batch-processing)：重查并沿用 3.3 的 50% 标准 API 收费、多数一小时内但不保证、24 小时未完成请求过期；不能当成实时 SLA。
+- [Reducing latency](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/reduce-latency) 与 [Parallel tool use](https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use)：核实流式改善可见等待、控制句 / 段数、max_tokens 截断；完整保留独立只读“通常”可并行，以及副作用、共享状态、顺序要求“可能更适合”串行的条件。
+- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)：核实精简高信号上下文并保留任务信息，不能把最小上下文理解成越短越好；回归验证与成功任务成本核算为经验法则。
+
+## 4.6
+
+- [官方 Python SDK Usage 字段定义](https://raw.githubusercontent.com/anthropics/anthropic-sdk-python/main/src/anthropic/types/usage.py) 与 [Messages API 响应 usage](https://platform.claude.com/docs/en/api/http/messages/create)：2026-09-29 重新打开核实 `input_tokens`、`cache_creation_input_tokens`、`cache_read_input_tokens`、`output_tokens`；SDK 分别定义普通输入、缓存写入、缓存读取及输出用量，API 响应示例列出四个字段。对应事实 F108，输入总量与流式累计口径另见下列 caching / streaming 来源。
+- [Stop reasons and fallback](https://platform.claude.com/docs/en/build-with-claude/handling-stop-reasons)：核实并列全该页七个 stop_reason 值及含义；停止原因不等于业务成功，截断与工具执行分别处置，正文未扩写 fallback 的型号限制。
+- [Prompt caching](https://platform.claude.com/docs/en/build-with-claude/prompt-caching)：核实总输入由普通输入、缓存写入、缓存读取三个用量字段相加，输出另计，不能只用 input_tokens 估算完整输入量。
+- [Streaming messages](https://platform.claude.com/docs/en/build-with-claude/streaming)：核实 message_delta.usage 的 token 数是累计值；不能把每次累计数再次求和。
+- [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核实线上分布漂移监测、抽样轨迹复核、人工校准与离线回归互补；仪表盘分组、阈值 / 窗口 / 样本量 / 负责人、脱敏限权、样本回流均为本文执行经验法则，策略参见 3.4。
+
 ## R.1
 
 干扰项名称、收紧后的定义及单标签优先级为本项目原创标注约定，不是官方分类。事实背景沿用 3.1–3.8 的对应来源；跨组织 agent-to-agent 的任务契约是本文经验法则，不声称某个 A2A 协议的字段或原生支持。
